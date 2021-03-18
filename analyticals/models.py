@@ -7,7 +7,8 @@ class Stock(models.Model):
     This model will contain the data for the Stocks(ticker, stockprice, 52 week
     high, 52 week low)
     """
-    return Stock
+    #return Stock
+    pass
 
 class portEntries(models.Model):
     """
@@ -16,4 +17,5 @@ class portEntries(models.Model):
     shares that each individual user has of a stock, which user bought this
     stock(which is a foriegnKey), and which stock it is(also a foriegnKey)
     """
-    return portEntries
+    #return portEntries
+    pass
