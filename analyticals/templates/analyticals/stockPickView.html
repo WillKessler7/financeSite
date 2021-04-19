@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 
     <head>
     <title>Kessler Finance Site</title>
+
+    <meta charset="utf-8">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
@@ -19,6 +21,11 @@
     <body>
         <div class="container">
 
+            <form method="GET">
+                <label for="ticker">Ticker:</label>
+                <input type="text" name="ticker">
+                <input type="submit">
+            </form>
             {% for stock in allStocks %}
                 <h3>
                 {{ stock.ticker}}

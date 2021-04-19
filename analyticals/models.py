@@ -8,11 +8,11 @@ class Stock(models.Model):
     high, 52 week low)
     """
     ticker = models.CharField(max_length=5)
-    stockPrice = models.DecimalField(max_digits=7, decimal_places=2)
+    stockPrice = models.DecimalField(max_digits=10, decimal_places=2)
     # 52 week high
-    ftwh = models.DecimalField(max_digits=7, decimal_places=2)
+    ftwh = models.DecimalField(max_digits=10, decimal_places=2)
     # 52 week low
-    ftwl = models.DecimalField(max_digits=7, decimal_places=2)
+    ftwl = models.DecimalField(max_digits=10, decimal_places=2)
     dateAdded = models.DateTimeField('date published')
 
 

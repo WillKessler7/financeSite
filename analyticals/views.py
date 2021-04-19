@@ -17,6 +17,7 @@ class stockPickView(View):
         template = loader.get_template('analyticals/stockPickView.html')
         allStocks = Stock.objects.all()
         context = {'allStocks': allStocks }
+        print(request.GET)
         return HttpResponse(template.render(context, request))
 
 class graphDisplayView(View):
