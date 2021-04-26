@@ -19,16 +19,19 @@
 
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <div class="jumbotron jumbotron-fluid">
-                <h1>Kessler Finance Site</h1>
+                <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
             </div>
 
             </br>
 
-            <form method="GET">
-                <label for="ticker">Ticker:</label>
-                <input type="text" name="ticker">
+
+            <form method="POST" action="graphDisplay">
+                {% csrf_token %}
+
+                <label for="sharesOwned">Shares Owned:</label>
+                <input type="text" name="sharesOwned">
                 <input type="submit">
             </form>
             {% for stock in allStocks %}
