@@ -10,7 +10,6 @@ from .models import Stock, PortEntries
 class loginView(View):
     def post(self, request):
 
-
         # if the username imported from template's form is for logging in,
         if 'inputedUsername' in request.POST.keys():
 
@@ -18,10 +17,18 @@ class loginView(View):
             user = authenticate(username=request.POST['inputedUsername'],\
             password=request.POST['inputedPassword'])
 
-        # if the user was found (authenticated),
-        if user is not None:
-            # login the user
-            login(request, user)
+            # if the user was found (authenticated),
+            if user is not None:
+                # login the user
+                login(request, user)
+                # set loggedIn variable to True for use in templates
+                loggedIn = True
+
+            else:
+                loggedIn = False
+                password = request.POST['inputedPassword']
+                # display password as an HttpResponse as a test case
+                return HttpResponse(password)
 
         # otherwise, if the user was not found,
         else:
@@ -30,9 +37,12 @@ class loginView(View):
         #else:
             #logout(request)
 
-        # the following two lines are for testing user authentication
-        password = request.POST['inputedPassword']
-        return HttpResponse(password)
+        context = {
+            'loggedIn': loggedIn,
+        }
+
+        return HttpResponse(template.render(context, request))
+
 
     def get(self, request):
 
