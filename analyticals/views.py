@@ -14,6 +14,8 @@ class loginView(View):
         if 'inputedUsername' in request.POST.keys():
 
             # try to authenticate the inputed username and password
+            username = request.POST['inputedUsername']
+            password = request.POST['inputedPassword']
             user = authenticate(username=request.POST['inputedUsername'],\
             password=request.POST['inputedPassword'])
 
@@ -32,14 +34,20 @@ class loginView(View):
 
         # otherwise, if the user was not found,
         else:
-            # failed login
+            # not for login, will deal with making accounts and logouts later
             pass
         #else:
             #logout(request)
 
+        # save the variables of whether the user is loggedin and the username
+        # to the correct template
         context = {
             'loggedIn': loggedIn,
+            'username': username
         }
+
+        # assign template to be loaded to the correct view
+        template = loader.get_template('analyticals/stockPickView.html')
 
         return HttpResponse(template.render(context, request))
 
