@@ -8,16 +8,23 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Stock, PortEntries
 
 class loginView(View):
-    def post(self, request):
 
+    def get(self, request):
+
+        template = loader.get_template('analyticals/loginView.html')
+        context = {}
+        return HttpResponse(template.render(context, request))
+
+class stockPickView(View):
+    def post(self, request):
+        
         # if the username imported from template's form is for logging in,
         if 'inputedUsername' in request.POST.keys():
 
             # try to authenticate the inputed username and password
             username = request.POST['inputedUsername']
             password = request.POST['inputedPassword']
-            user = authenticate(username=request.POST['inputedUsername'],\
-            password=request.POST['inputedPassword'])
+            user = authenticate(username=username, password=password)
 
             # if the user was found (authenticated),
             if user is not None:
@@ -52,13 +59,6 @@ class loginView(View):
         return HttpResponse(template.render(context, request))
 
 
-    def get(self, request):
-
-        template = loader.get_template('analyticals/loginView.html')
-        context = {}
-        return HttpResponse(template.render(context, request))
-
-class stockPickView(View):
     def get(self, request):
         template = loader.get_template('analyticals/stockPickView.html')
         allStocks = Stock.objects.all()
