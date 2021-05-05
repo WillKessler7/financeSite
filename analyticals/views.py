@@ -19,16 +19,25 @@ class loginView(View):
 
 class stockPickView(View):
     def post(self, request):
+
         # sets loggedIn var to False as default because user begins not
         # logged in
         loggedIn = False
 
+        # try to authenticate the inputed username and password
+        username = request.POST['inputedUsername']
+        password = request.POST['inputedPassword']
+
+        # save the variables of whether the user is loggedin and the username
+        # to the correct template
+        context = {
+            'loggedIn': loggedIn,
+            'username': username
+        }
+
         # if the username imported from template's form is for logging in,
         if 'inputedUsername' in request.POST.keys():
 
-            # try to authenticate the inputed username and password
-            username = request.POST['inputedUsername']
-            password = request.POST['inputedPassword']
             user = authenticate(username=username, password=password)
 
             # if the user was found,
@@ -43,19 +52,19 @@ class stockPickView(View):
 
 
 
+
+
             # otherwise, if the user was not found,
             else:
-                # not for login, will deal with making accounts and logouts later
-                return redirect("loginView")
-        #else:
+                # redirect them to the loginView to try logging in again
+                pass
+
+        # if the form submitted is not for logging in,
+        else:
+            # pass because I have not written the logout function yet
+            pass
             #logout(request)
 
-        # save the variables of whether the user is loggedin and the username
-        # to the correct template
-        context = {
-            'loggedIn': loggedIn,
-            'username': username
-        }
 
 
         ## checks if user was authenticated
@@ -68,6 +77,7 @@ class stockPickView(View):
 
         return HttpResponse(template.render(context, request))
 
+        # not for login, will deal with making accounts and logouts later
 
     def get(self, request):
         template = loader.get_template('analyticals/stockPickView.html')
