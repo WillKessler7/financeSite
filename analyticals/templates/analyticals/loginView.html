@@ -20,25 +20,31 @@
 
     </head>
     <body>
-        <form method="POST" action="stockPick">
-            {% csrf_token %}
-            <div class="container-fluid">
-                <div class="jumbotron jumbotron-fluid">
-                    <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
-                </div>
+        {% if loggedIn == False %}
+            <!-- change font to danger later when working on layout !-->
+            <h3>Invalid username or password</h3>
 
-                </br>
+        {% else %}
+            <form method="POST" action="/">
+                {% csrf_token %}
+                <div class="container-fluid">
+                    <div class="jumbotron jumbotron-fluid">
+                        <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
+                    </div>
 
-                <div class="form-group">
-                    <label for="inputUsername">Username</label>
-                    <input type="text" class="form-control" name="inputedUsername" id="inputedUsername" />
+                    </br>
+
+                    <div class="form-group">
+                        <label for="inputUsername">Username</label>
+                        <input type="text" class="form-control" name="inputedUsername" id="inputedUsername" />
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword">Password</label>
+                        <input type="password" class="form-control" name="inputedPassword" id="inputedPassword" />
+                    </div>
+                    <button type="submit">Login</button>
                 </div>
-                <div class="form-group">
-                    <label for="inputPassword">Password</label>
-                    <input type="password" class="form-control" name="inputedPassword" id="inputedPassword" />
-                </div>
-                <button type="submit">Login</button>
-            </div>
-        </form>
+            </form>
+        {% endif %}
     </body>
 </html>

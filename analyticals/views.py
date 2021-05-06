@@ -9,17 +9,6 @@ from .models import Stock, PortEntries
 
 class loginView(View):
     def post(self, request):
-        return HttpResponse("hello")
-
-    def get(self, request):
-
-        template = loader.get_template('analyticals/loginView.html')
-        context = {}
-        return HttpResponse(template.render(context, request))
-
-class stockPickView(View):
-    def post(self, request):
-
         # sets loggedIn var to False as default because user begins not
         # logged in
         loggedIn = False
@@ -52,32 +41,30 @@ class stockPickView(View):
 
 
 
-
-
             # otherwise, if the user was not found,
             else:
-                # redirect them to the loginView to try logging in again
-                pass
+                # loads back to the loginView template
+                template = loader.get_template('analyticals/loginView.html')
 
         # if the form submitted is not for logging in,
         else:
+            # don't need to set loggedIn var to false because it is already false
             # pass because I have not written the logout function yet
             pass
             #logout(request)
 
-
-
-        ## checks if user was authenticated
-        # if request.user.is_authenticated:
-
-
-        ## if user was not authenticated,
-        # else:
-            # don't need to set loggedIn var to false because it is already false
-
         return HttpResponse(template.render(context, request))
 
-        # not for login, will deal with making accounts and logouts later
+
+    def get(self, request):
+
+        template = loader.get_template('analyticals/loginView.html')
+        context = {}
+        return HttpResponse(template.render(context, request))
+
+class stockPickView(View):
+    def post(self, request):
+        pass
 
     def get(self, request):
         template = loader.get_template('analyticals/stockPickView.html')
