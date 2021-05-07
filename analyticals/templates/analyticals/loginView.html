@@ -20,35 +20,41 @@
 
     </head>
     <body>
+        <div class="container-fluid">
+            <div class="jumbotron jumbotron-fluid">
+                <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
+            </div>
 
-            <form method="POST">
-                {% csrf_token %}
-                <div class="container-fluid">
-                    <div class="jumbotron jumbotron-fluid">
-                        <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
-                    </div>
+                </br>
 
-                    </br>
+                <h3>Welcome to the Kessler Fianance Site! Please log in to your
+data or create a new account if you are new here.</h3>
 
-                    {% if loggedIn == False %}
-                        <!-- change font to danger later when working on layout !-->
-                        <h3>Invalid username or password. Please try again</h3>
+                <form method="POST">
+                    {% csrf_token %}
 
-                    {% endif %}
+                        </br>
 
-                    </br>
+                        {% if loggedIn == False %}
+                            <!-- change font to danger later when working on layout !-->
+                            <h3>Invalid username or password. Please try again</h3>
 
-                    <div class="form-group">
-                        <label for="inputUsername">Username</label>
-                        <input type="text" class="form-control" name="inputedUsername" id="inputedUsername" />
-                    </div>
-                    <div class="form-group">
-                        <label for="inputPassword">Password</label>
-                        <input type="password" class="form-control" name="inputedPassword" id="inputedPassword" />
-                    </div>
-                    <button type="submit">Login</button>
-                </div>
-            </form>
+                        {% endif %}
+
+                        </br>
+
+                        <div class="form-group">
+                            <label for="inputUsername">Username</label>
+                            <input type="text" class="form-control" name="inputedUsername" id="inputedUsername" />
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword">Password</label>
+                            <input type="password" class="form-control" name="inputedPassword" id="inputedPassword" />
+                        </div>
+                        <button type="submit">Login</button>
+
+                </form>
+
 
     </body>
 </html>
