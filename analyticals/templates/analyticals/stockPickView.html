@@ -37,6 +37,12 @@
                 <input type="text" name="sharesOwned">
                 <input type="submit">
             </form>
+
+            <form method="POST" action="stockPick">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
+            </form>
+
             {% for stock in allStocks %}
                 <h3>
                 {{ stock.ticker}}

@@ -64,7 +64,14 @@ class loginView(View):
 
 class stockPickView(View):
     def post(self, request):
-        pass
+        # checks if the form submission was for logging out
+        if 'logoutButton' in request.POST.keys():
+            # redirect to login view
+            return redirect("loginView")
+
+        else:
+            # will work on the other case later
+            pass
 
     def get(self, request):
         template = loader.get_template('analyticals/stockPickView.html')
