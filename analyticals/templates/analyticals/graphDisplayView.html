@@ -26,6 +26,11 @@
 
             </br>
 
+            <form method="POST" action="stockPick">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
+            </form>
+
         </div>
     </body>
 </html>

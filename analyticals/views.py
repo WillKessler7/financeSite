@@ -70,8 +70,9 @@ class stockPickView(View):
             return redirect("loginView")
 
         else:
-            # will work on the other case later
-            pass
+            template = loader.get_template('analyticals/graphDisplayView.html')
+            context = {}
+            return HttpResponse(template.render(context, request))
 
     def get(self, request):
         template = loader.get_template('analyticals/stockPickView.html')
@@ -81,6 +82,18 @@ class stockPickView(View):
         return HttpResponse(template.render(context, request))
 
 class graphDisplayView(View):
+    def post(self, request):
+            # checks if the form submission was for logging out
+            if 'logoutButton' in request.POST.keys():
+                # redirect to login view
+                return redirect("loginView")
+
+            else:
+                # will work on the other case later
+                template = loader.get_template('analyticals/graphDisplayView.html')
+                context = {}
+                return HttpResponse(template.render(context, request))
+                
     def get(self, request):
         template = loader.get_template('analyticals/graphDisplayView.html')
         # put data in context for each view
