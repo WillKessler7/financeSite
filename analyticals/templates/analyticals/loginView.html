@@ -27,8 +27,8 @@
 
                     </br>
 
-                    <h3>Welcome to the Kessler Fianance Site! Please log in to your
-data or create a new account if you are new here.</h3>
+                    <h3>Welcome to the Kessler Fianance Site! Please log in to see your
+data or create a new account by entering a username and password if you are new here.</h3>
 
                     <form method="POST">
                         {% csrf_token %}
@@ -53,6 +53,11 @@ data or create a new account if you are new here.</h3>
                             </div>
                             <button type="submit">Login</button>
 
+                    </form>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success" name="createButton">Create Account</button>
                     </form>
             </div>
 

@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.template import loader
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from .models import Stock, PortEntries
 
@@ -17,15 +18,9 @@ class loginView(View):
         username = request.POST['inputedUsername']
         password = request.POST['inputedPassword']
 
-        # save the variables of whether the user is loggedin and the username
-        # to the correct template
-        context = {
-            'loggedIn': loggedIn,
-            'username': username
-        }
 
         # if the username imported from template's form is for logging in,
-        if 'inputedUsername' in request.POST.keys():
+        if 'loginButton' in request.POST.keys():
 
             user = authenticate(username=username, password=password)
 
@@ -50,8 +45,17 @@ class loginView(View):
         else:
             # don't need to set loggedIn var to false because it is already false
             # pass because I have not written the logout function yet
-            pass
-            #logout(request)
+            newUser = User(username = request.POST['inputedUsername'],\
+            password = make_password(request.POST['inputedPassword']))
+            newuser.save()
+
+        # save the variables of whether the user is loggedin and the username
+        # to the correct template
+        context = {
+            'loggedIn': loggedIn,
+            'username': username,
+            'newUser': newUser,
+        }
 
         return HttpResponse(template.render(context, request))
 
@@ -93,7 +97,7 @@ class graphDisplayView(View):
                 template = loader.get_template('analyticals/graphDisplayView.html')
                 context = {}
                 return HttpResponse(template.render(context, request))
-                
+
     def get(self, request):
         template = loader.get_template('analyticals/graphDisplayView.html')
         # put data in context for each view
