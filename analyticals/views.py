@@ -51,7 +51,9 @@ class loginView(View):
                 password = make_password(request.POST['inputedPassword']))
                 newUser.save()
 
+        # otherwise, if a sumbit button was not found,
         else:
+            # display to screen that submit was not found
             return HttpResponse("submit doesnt show")
 
         # save the variables of whether the user is loggedin and the username
