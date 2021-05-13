@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from .models import Stock, PortEntries
+import yfinance as yf
 
 class loginView(View):
     def post(self, request):
@@ -75,6 +76,20 @@ class loginView(View):
 
 class stockPickView(View):
     def post(self, request):
+
+        stockQuote = yf.Ticker(symbol)
+
+        # stock ticker
+        stock.ticker = stockQuote.info["symbol"]
+        # stock price
+        stock.stockPrice = float(stockQuote.info["regularMarketOpen"])
+        # fifty two week high
+        stock.ftwh = float(stockQuote.info["fiftyTwoWeekHigh"])
+        # fifty two week low
+        stock.ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
+
+
+
         # checks if the form submission was for logging out
         if 'logoutButton' in request.POST.keys():
             # redirect to login view

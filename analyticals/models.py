@@ -7,6 +7,7 @@ class Stock(models.Model):
     This model will contain the data for the Stocks(ticker, stockprice, 52 week
     high, 52 week low)
     """
+
     ticker = models.CharField(max_length=5)
     stockPrice = models.DecimalField(max_digits=10, decimal_places=2)
     # 52 week high
