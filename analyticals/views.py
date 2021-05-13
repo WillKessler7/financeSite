@@ -14,40 +14,45 @@ class loginView(View):
         # logged in
         loggedIn = False
 
+        newUser = ""
+
         # try to authenticate the inputed username and password
         username = request.POST['inputedUsername']
         password = request.POST['inputedPassword']
 
 
         # if the username imported from template's form is for logging in,
-        if 'loginButton' in request.POST.keys():
+        if 'submit' in request.POST.keys():
+            if request.POST['submit'] == 'login':
 
-            user = authenticate(username=username, password=password)
+                user = authenticate(username=username, password=password)
 
-            # if the user was found,
-            if user is not None:
-                # login the user
-                login(request, user)
-                # set loggedIn var to true
-                loggedIn = True
-                # assign template to be loaded to the correct view
+                # if the user was found,
+                if user is not None:
+                    # login the user
+                    login(request, user)
+                    # set loggedIn var to true
+                    loggedIn = True
+                    # assign template to be loaded to the correct view
+                    template = loader.get_template('analyticals/stockPickView.html')
+
+
+
+
+                # otherwise, if the user was not found,
+                else:
+                    # loads back to the loginView template
+                    template = loader.get_template('analyticals/loginView.html')
+
+            # if the form submitted is not for logging in must be for creating acct
+            elif request.POST['submit'] == 'create':
                 template = loader.get_template('analyticals/stockPickView.html')
+                newUser = User(username = request.POST['inputedUsername'],\
+                password = make_password(request.POST['inputedPassword']))
+                newUser.save()
 
-
-
-
-            # otherwise, if the user was not found,
-            else:
-                # loads back to the loginView template
-                template = loader.get_template('analyticals/loginView.html')
-
-        # if the form submitted is not for logging in,
         else:
-            # don't need to set loggedIn var to false because it is already false
-            # pass because I have not written the logout function yet
-            newUser = User(username = request.POST['inputedUsername'],\
-            password = make_password(request.POST['inputedPassword']))
-            newuser.save()
+            return HttpResponse("submit doesnt show")
 
         # save the variables of whether the user is loggedin and the username
         # to the correct template
