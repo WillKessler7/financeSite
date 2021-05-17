@@ -9,6 +9,7 @@ class Stock(models.Model):
     """
 
     ticker = models.CharField(max_length=5)
+    companyName = models.CharField(max_length=50)
     stockPrice = models.DecimalField(max_digits=10, decimal_places=2)
     # 52 week high
     ftwh = models.DecimalField(max_digits=10, decimal_places=2)

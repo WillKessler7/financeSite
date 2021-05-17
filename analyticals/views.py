@@ -76,17 +76,38 @@ class loginView(View):
 
 class stockPickView(View):
     def post(self, request):
+        """ program will iterate through the QQQ stock index and will show the
+        stock ticker and company name to the user and the user can select if
+        they want to follow the stock and view its information """
+
+        # QQQ stock Index stocks that have full data with API
+        stockIndex = ["THO", "MSFT", "AAPL", "AMZN", "FB", "GOOGL", "GOOG", "NFLX",\
+        "NVDA", "PEP", "ADBE", "CSCO", "PYPL", "TSLA", "AMGN", "COST",\
+        "AVGO", "TXN", "GILD", "QCOM", "SBUX", "TMUS", "INTU", "FISV",\
+        "ADP", "AMD", "REGN", "BKNG", "ATVI", "BIIB", "CSX",\
+        "ILMN", "JD", "ADSK", "ADI", "MELI", "WBA", "KHC", "LRCX", "EXC",\
+        "EA", "EBAY", "ROST", "CTSH", "ORLY", "SGEN", "NXPI",\
+        "BIDU", "MAR", "KLAC", "WDAY", "VRSK", "SIRI", "NTES", "VRSN",\
+        "CSGP", "PCAR", "SNPS", "ANSS", "CDNS", "SPLK", "CTAS", "FAST",\
+        "XLNX", "INCY", "CERN", "MCHP", "CPRT", "CTXS", "SWKS", "DLTR", "BMRN", \
+        "ZM", "CHKP", "CDW", "TTWO", "MXIM", "ULTA", "WDC", "NTAP", "FOXA"]
 
         stockQuote = yf.Ticker(symbol)
 
         # stock ticker
         stock.ticker = stockQuote.info["symbol"]
+
+        # name of the company
+        stock.companyName = str(stockQuote.info["shortName"])
+        
         # stock price
         stock.stockPrice = float(stockQuote.info["regularMarketOpen"])
         # fifty two week high
         stock.ftwh = float(stockQuote.info["fiftyTwoWeekHigh"])
         # fifty two week low
         stock.ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
+
+        stock.dateAdded = datetime.DateTimeField.today()
 
 
 
