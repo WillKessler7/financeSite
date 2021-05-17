@@ -99,7 +99,7 @@ class stockPickView(View):
 
         # name of the company
         stock.companyName = str(stockQuote.info["shortName"])
-        
+
         # stock price
         stock.stockPrice = float(stockQuote.info["regularMarketOpen"])
         # fifty two week high
@@ -107,7 +107,8 @@ class stockPickView(View):
         # fifty two week low
         stock.ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
 
-        stock.dateAdded = datetime.DateTimeField.today()
+        # date stock was added
+        stock.dateAdded = datetime.timezone.now()
 
 
 
@@ -117,7 +118,7 @@ class stockPickView(View):
             return redirect("loginView")
 
         else:
-            template = loader.get_template('analyticals/graphDisplayView.html')
+            template = loader.get_template('analyticals/stockDisplayView.html')
             context = {}
             return HttpResponse(template.render(context, request))
 
@@ -128,7 +129,7 @@ class stockPickView(View):
         print(request.POST)
         return HttpResponse(template.render(context, request))
 
-class graphDisplayView(View):
+class stockDisplayView(View):
     def post(self, request):
             # checks if the form submission was for logging out
             if 'logoutButton' in request.POST.keys():
@@ -137,12 +138,12 @@ class graphDisplayView(View):
 
             else:
                 # will work on the other case later
-                template = loader.get_template('analyticals/graphDisplayView.html')
+                template = loader.get_template('analyticals/stockDisplayView.html')
                 context = {}
                 return HttpResponse(template.render(context, request))
 
     def get(self, request):
-        template = loader.get_template('analyticals/graphDisplayView.html')
+        template = loader.get_template('analyticals/stockDisplayView.html')
         # put data in context for each view
         context = {}
         return HttpResponse(template.render(context, request))

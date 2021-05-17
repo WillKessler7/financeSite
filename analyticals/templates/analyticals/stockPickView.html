@@ -30,7 +30,7 @@
 
             </br>
 
-            <form method="POST" action="graphDisplay">
+            <form method="POST" action="stockDisplay">
                 {% csrf_token %}
 
                 <label for="sharesOwned">Shares Owned:</label>
@@ -45,7 +45,8 @@
 
             {% for stock in allStocks %}
                 <h3>
-                {{ stock.ticker}}
+                {{ stock.ticker }}
+                {{ stock.companyName }}
                 {{ stock.stockPrice }}
                 {{ stock.ftwh }}
                 {{ stock.ftwl }}
