@@ -7,9 +7,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from .models import Stock, PortEntries
-import yfinance as yf
+from yfinance import Ticker
 
 class loginView(View):
+
+    # this view is only gotten to through post unless searched for so default
+    # is set to False for this variable
+    urlRequest = False
+
     def post(self, request):
         # sets loggedIn var to False as default because user begins not
         # logged in
@@ -63,18 +68,25 @@ class loginView(View):
             'loggedIn': loggedIn,
             'username': username,
             'newUser': newUser,
+            'urlRequest': urlRequest
         }
 
         return HttpResponse(template.render(context, request))
 
 
     def get(self, request):
+        urlRequest = True
 
         template = loader.get_template('analyticals/loginView.html')
-        context = {}
+        context = {'urlRequest': urlRequest}
         return HttpResponse(template.render(context, request))
 
 class stockPickView(View):
+
+    # this view is only gotten to through post unless searched for so default
+    # is set to False for this variable
+    urlRequest = False
+
     def post(self, request):
         """ program will iterate through the QQQ stock index and will show the
         stock ticker and company name to the user and the user can select if
@@ -92,7 +104,7 @@ class stockPickView(View):
         "XLNX", "INCY", "CERN", "MCHP", "CPRT", "CTXS", "SWKS", "DLTR", "BMRN", \
         "ZM", "CHKP", "CDW", "TTWO", "MXIM", "ULTA", "WDC", "NTAP", "FOXA"]
 
-        stockQuote = yf.Ticker(symbol)
+        stockQuote = yfinance.Ticker(symbol)
 
         # stock ticker
         stock.ticker = stockQuote.info["symbol"]
@@ -110,6 +122,15 @@ class stockPickView(View):
         # date stock was added
         stock.dateAdded = datetime.timezone.now()
 
+        # set allStocks as a JSON object containing all of the information
+        # regarding the different stock data
+
+        allStocks = Stock.objects.all()
+        context = {
+            'allStocks': allStocks,
+            'urlRequest': urlRequest
+         }
+
 
 
         # checks if the form submission was for logging out
@@ -119,17 +140,20 @@ class stockPickView(View):
 
         else:
             template = loader.get_template('analyticals/stockDisplayView.html')
-            context = {}
             return HttpResponse(template.render(context, request))
 
     def get(self, request):
         template = loader.get_template('analyticals/stockPickView.html')
-        allStocks = Stock.objects.all()
-        context = {'allStocks': allStocks }
-        print(request.POST)
+        urlRequest = True
+        context = {'urlRequest': urlRequest}
         return HttpResponse(template.render(context, request))
 
 class stockDisplayView(View):
+
+    # this view is only gotten to through post unless searched for so default
+    # is set to False for this variable
+
+    urlRequest = False
     def post(self, request):
             # checks if the form submission was for logging out
             if 'logoutButton' in request.POST.keys():
@@ -139,11 +163,14 @@ class stockDisplayView(View):
             else:
                 # will work on the other case later
                 template = loader.get_template('analyticals/stockDisplayView.html')
-                context = {}
+                context = {'urlRequest': urlRequest}
                 return HttpResponse(template.render(context, request))
 
     def get(self, request):
+        # because this request can only be acheived by searching the url,
+        # the url request variable is set to True
+        urlRequest = True
         template = loader.get_template('analyticals/stockDisplayView.html')
         # put data in context for each view
-        context = {}
+        context = {'urlRequest': urlRequest}
         return HttpResponse(template.render(context, request))

@@ -26,33 +26,44 @@
 
             </br>
 
-            <h1>Hello, {{username}}</h1>
+            {% if urlRequest %}
 
-            </br>
+                <h3 class="text-danger">Sorry! This link is not supposed to be reached. Please click
+                     on the button below to be redirected to the correct page.</h3>
+                <a href="loginView"> <button type="submit" value='link' class="btn btn-success" name="submit">Go to new page</button></a>
 
-            <form method="POST" action="stockDisplay">
-                {% csrf_token %}
 
-                <label for="sharesOwned">Shares Owned:</label>
-                <input type="text" name="sharesOwned">
-                <input type="submit">
-            </form>
+            {% else %}
 
-            <form method="POST" action="stockPick">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
-            </form>
 
-            {% for stock in allStocks %}
-                <h3>
-                {{ stock.ticker }}
-                {{ stock.companyName }}
-                {{ stock.stockPrice }}
-                {{ stock.ftwh }}
-                {{ stock.ftwl }}
-                {{ stock.dateAdded }}
-                </h3>
-            {% endfor %}
+                <h1>Hello, {{username}}</h1>
+
+                </br>
+
+                <form method="POST" action="stockDisplay">
+                    {% csrf_token %}
+
+                    <label for="sharesOwned">Shares Owned:</label>
+                    <input type="text" name="sharesOwned">
+                    <input type="submit">
+                </form>
+
+                <form method="POST" action="stockPick">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
+                </form>
+
+                {% for stock in allStocks %}
+                    <h3>
+                    {{ stock.ticker }}
+                    {{ stock.companyName }}
+                    {{ stock.stockPrice }}
+                    {{ stock.ftwh }}
+                    {{ stock.ftwl }}
+                    {{ stock.dateAdded }}
+                    </h3>
+                {% endfor %}
+            {% endif %}
 
         </div>
     </body>
