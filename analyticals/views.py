@@ -11,14 +11,15 @@ from yfinance import Ticker
 
 class loginView(View):
 
-    # this view is only gotten to through post unless searched for so default
-    # is set to False for this variable
-    urlRequest = False
 
     def post(self, request):
         # sets loggedIn var to False as default because user begins not
         # logged in
         loggedIn = False
+
+        # this view is only gotten to through post unless searched for so default
+        # is set to False for this variable
+        urlRequest = False
 
         newUser = ""
 
@@ -83,11 +84,13 @@ class loginView(View):
 
 class stockPickView(View):
 
-    # this view is only gotten to through post unless searched for so default
-    # is set to False for this variable
-    urlRequest = False
-
     def post(self, request):
+
+        # this view is only gotten to through post unless searched for so default
+        # is set to False for this variable
+        urlRequest = False
+
+
         """ program will iterate through the QQQ stock index and will show the
         stock ticker and company name to the user and the user can select if
         they want to follow the stock and view its information """
@@ -150,21 +153,24 @@ class stockPickView(View):
 
 class stockDisplayView(View):
 
-    # this view is only gotten to through post unless searched for so default
-    # is set to False for this variable
 
-    urlRequest = False
     def post(self, request):
-            # checks if the form submission was for logging out
-            if 'logoutButton' in request.POST.keys():
-                # redirect to login view
-                return redirect("loginView")
 
-            else:
-                # will work on the other case later
-                template = loader.get_template('analyticals/stockDisplayView.html')
-                context = {'urlRequest': urlRequest}
-                return HttpResponse(template.render(context, request))
+        # this view is only gotten to through post unless searched for so default
+        # is set to False for this variable
+        urlRequest = False
+
+
+        # checks if the form submission was for logging out
+        if 'logoutButton' in request.POST.keys():
+            # redirect to login view
+            return redirect("loginView")
+
+        else:
+            # will work on the other case later
+            template = loader.get_template('analyticals/stockDisplayView.html')
+            context = {'urlRequest': urlRequest}
+            return HttpResponse(template.render(context, request))
 
     def get(self, request):
         # because this request can only be acheived by searching the url,
