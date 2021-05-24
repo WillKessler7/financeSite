@@ -26,10 +26,23 @@
 
             </br>
 
-            <form method="POST" action="stockPick">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
-            </form>
+            {% if urlRequest %}
+
+
+                <h3 class="text-danger">Sorry! This link is not supposed to be reached. Please click
+                     on the button below to be redirected to the correct page.</h3>
+                <a href="loginView"> <button type="submit" value='link' class="btn btn-success" name="submit">Go to new page</button></a>
+
+            {% else %}
+
+                </br>
+
+                <form method="POST" action="stockPick">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
+                </form>
+
+            {% endif %}
 
         </div>
     </body>

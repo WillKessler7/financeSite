@@ -76,10 +76,8 @@ class loginView(View):
 
 
     def get(self, request):
-        urlRequest = True
-
         template = loader.get_template('analyticals/loginView.html')
-        context = {'urlRequest': urlRequest}
+        context = {}
         return HttpResponse(template.render(context, request))
 
 class stockPickView(View):
