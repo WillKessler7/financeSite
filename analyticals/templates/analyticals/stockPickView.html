@@ -26,28 +26,39 @@
 
             </br>
 
+            <!-- if the url was typed out into search bar rather than achevied
+            through path -->
             {% if urlRequest %}
 
+                <!-- displays error message -->
                 <h3 class="text-danger">Sorry! This link is not supposed to be reached. Please click
                      on the button below to be redirected to the correct page.</h3>
+
+                <!-- links the button to the login view like it should go to -->
                 <a href="loginView"> <button type="submit" value='link' class="btn btn-success" name="submit">Go to new page</button></a>
 
 
+            <!-- otherwise, -->
             {% else %}
 
-
+                <!-- show user their username -->
                 <h1>Hello, {{username}}</h1>
 
                 </br>
 
+                <!-- this is a form for picking how many stocks of a company
+                the user owns, redirects to stockDisplay template after -->
                 <form method="POST" action="stockDisplay">
                     {% csrf_token %}
 
+                    <!-- input for number of stocks user owns -->
                     <label for="sharesOwned">Shares Owned:</label>
                     <input type="text" name="sharesOwned">
                     <input type="submit">
                 </form>
 
+
+                <!-- logout button in case user wants to logout -->
                 <form method="POST" action="stockPick">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
