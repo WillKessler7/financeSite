@@ -2,11 +2,15 @@
 <html lang="en-US">
 
     <head>
+    {% load static %}
+
     <title>Kessler Finance Site</title>
 
     <meta charset="utf-8">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src= "{% static 'semantic/package.js' %}"></script>
 
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -36,6 +40,15 @@
             {% else %}
 
                 </br>
+
+                <div class="ui large statistic">
+                    <div class="value">
+                        {{ numUsers }}
+                    </div>
+                    <div class="label">
+                        Number of Kessler Finance Site Users
+                    </div>
+                </div>
 
                 <form method="POST" action="stockPick">
                     {% csrf_token %}
