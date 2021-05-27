@@ -17,10 +17,7 @@ class loginView(View):
         # logged in
         loggedIn = False
 
-        # this view is only gotten to through post unless searched for so default
-        # is set to False for this variable
-        urlRequest = False
-
+        # defines newUser as an empty string to initialize var
         newUser = ""
 
         # try to authenticate the inputed username and password
@@ -69,7 +66,6 @@ class loginView(View):
             'loggedIn': loggedIn,
             'username': username,
             'newUser': newUser,
-            'urlRequest': urlRequest
         }
 
         return HttpResponse(template.render(context, request))
@@ -154,6 +150,8 @@ class stockDisplayView(View):
 
     def post(self, request):
 
+        numUsers = len(User.objects.all())
+
         # this view is only gotten to through post unless searched for so default
         # is set to False for this variable
         urlRequest = False
@@ -165,9 +163,14 @@ class stockDisplayView(View):
             return redirect("loginView")
 
         else:
+            pass
+
             # will work on the other case later
             template = loader.get_template('analyticals/stockDisplayView.html')
-            context = {'urlRequest': urlRequest}
+            context = {
+            'urlRequest': urlRequest,
+            'numUsers': numUsers,
+            }
             return HttpResponse(template.render(context, request))
 
     def get(self, request):

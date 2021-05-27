@@ -2,11 +2,15 @@
 <html lang="en-US">
 
     <head>
+    {% load static %}
+
     <title>Kessler Finance Site</title>
 
     <meta charset="utf-8">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script type="text/javascript" src= "{% static 'analyticals/semantic/package.js' %}"></script>
 
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -26,17 +30,33 @@
 
             </br>
 
+            <!-- if the url was typed out into search bar rather than achevied
+            through path -->
             {% if urlRequest %}
 
-
+                <!-- displays error message -->
                 <h3 class="text-danger">Sorry! This link is not supposed to be reached. Please click
                      on the button below to be redirected to the correct page.</h3>
+
+                <!-- links the button to the login view like it should go to -->
                 <a href="loginView"> <button type="submit" value='link' class="btn btn-success" name="submit">Go to new page</button></a>
 
+            <!-- otherwise, the url was reached in the desired way -->
             {% else %}
 
                 </br>
 
+                <!-- displays the number of users as a statistic -->
+                <div class="ui large statistic">
+                    <div class="value">
+                        {{ numUsers }}
+                    </div>
+                    <div class="label">
+                        Number of Kessler Finance Site Users
+                    </div>
+                </div>
+
+                <!-- has a logout button in case user wants to logout -->
                 <form method="POST" action="stockPick">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>

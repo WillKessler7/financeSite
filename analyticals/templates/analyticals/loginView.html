@@ -26,7 +26,7 @@
                 </div>
 
                 </br>
-
+                
                 <h3>Welcome to the Kessler Finance Site! Please log in to see your
 data or create a new account by entering a username and password if you are new here.</h3>
 
@@ -35,25 +35,33 @@ data or create a new account by entering a username and password if you are new 
 
                         </br>
 
+                        <!-- if user is not yet logged in, -->
                         {% if loggedIn == False %}
                             <!-- change font to danger later when working on layout !-->
+                            <!-- show that user entered an incorrect input -->
                             <h3>Invalid username or password. Please try again</h3>
 
                         {% endif %}
 
                         </br>
 
+                        <!-- input box for username -->
                         <div class="form-group">
                             <label for="inputUsername">Username</label>
                             <input type="text" class="form-control" name="inputedUsername" id="inputedUsername" />
                         </div>
+
+                        <!-- input box for password -->
                         <div class="form-group">
                             <label for="inputPassword">Password</label>
                             <input type="password" class="form-control" name="inputedPassword" id="inputedPassword" />
                         </div>
 
+                        <!-- login button if user already has an acct -->
                         <button type="submit" value='login' name="submit">Login</button>
 
+
+                        <!-- create acct button if user doesn't already have one -->
                         <button type="submit" value='create' class="btn btn-success" name="submit">Create Account</button>
 
                 </form>
