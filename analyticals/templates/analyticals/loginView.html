@@ -12,6 +12,11 @@
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+    <!-- semantic ui -->
+    <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.14/semantic.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+
+
     <!-- Popper JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
@@ -26,9 +31,19 @@
                 </div>
 
                 </br>
-                
+
                 <h3>Welcome to the Kessler Finance Site! Please log in to see your
 data or create a new account by entering a username and password if you are new here.</h3>
+
+                <!-- displays the number of users as a statistic -->
+                <div class="ui small statistic">
+                    <div class="value">
+                        {{ numUsers }}
+                    </div>
+                    <div class="label">
+                        Number of Kessler Finance Site Users
+                    </div>
+                </div>
 
                 <form method="POST">
                     {% csrf_token %}
@@ -58,7 +73,7 @@ data or create a new account by entering a username and password if you are new 
                         </div>
 
                         <!-- login button if user already has an acct -->
-                        <button type="submit" value='login' name="submit">Login</button>
+                        <button class="ui secondary button" type="submit" value='login' name="submit">Login</button>
 
 
                         <!-- create acct button if user doesn't already have one -->

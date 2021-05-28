@@ -10,6 +10,9 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <!-- semantic ui -->
     <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.14/semantic.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
@@ -45,6 +48,16 @@
 
             <!-- otherwise, the url was reached in the desired way -->
             {% else %}
+
+                <!-- displays the number of users as a statistic -->
+                <div class="ui small statistic">
+                    <div class="value">
+                        {{ numUsers }}
+                    </div>
+                    <div class="label">
+                        Number of Site Users
+                    </div>
+                </div>
 
                 <!-- has a logout button in case user wants to logout -->
                 <form method="POST" action="stockPick">
