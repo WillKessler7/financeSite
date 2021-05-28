@@ -46,18 +46,6 @@
             <!-- otherwise, the url was reached in the desired way -->
             {% else %}
 
-                </br>
-
-                <!-- displays the number of users as a statistic -->
-                <div class="ui large statistic">
-                    <div class="value">
-                        {{ numUsers }}
-                    </div>
-                    <div class="label">
-                        Number of Kessler Finance Site Users
-                    </div>
-                </div>
-
                 <!-- has a logout button in case user wants to logout -->
                 <form method="POST" action="stockPick">
                     {% csrf_token %}
