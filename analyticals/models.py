@@ -15,7 +15,8 @@ class Stock(models.Model):
     ftwh = models.DecimalField(max_digits=10, decimal_places=2)
     # 52 week low
     ftwl = models.DecimalField(max_digits=10, decimal_places=2)
-    dateAdded = models.DateTimeField('date published')
+    # company description
+    companyDescrip = models.CharField(max_length=10000)
 
 
     pass
