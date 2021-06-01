@@ -29,8 +29,6 @@
                 <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
             </div>
 
-            </br>
-
             <!-- if the url was typed out into search bar rather than achevied
             through path -->
             {% if urlRequest %}
@@ -51,28 +49,38 @@
                     <div class="sub header">Please select the stocks that you
                       own from the QQQ index by typing their tickers in. For each
                       stock that you select, please enter the number of shares
-                      of that stock you own at the bottom of the page.</div>
+                      of that stock you own.</div>
 
 
                 <div class="ui list">
-                  {% for stock in stockIndex %}
+                {% for symbol in stockIndex %}
                     <div class="item">
-                      <div class="header">{{stock}}</div>
+                        <div class="header">{{symbol}} known as {{stock.companyName}}</div>
+                    {{ stock.companyDescrip }}
                     </div>
-                </div>
-
                 {% endfor %}
+                </div>
 
                 <!-- this is a form for picking how many stocks of a company
                 the user owns, redirects to stockDisplay template after -->
                 <form method="POST" action="stockDisplay">
                     {% csrf_token %}
 
+                    <!-- input for which stock user owns -->
+                    <div class="ui input focus">
+                        <input type="text" name="tickerInput" placeholder="Stock Ticker:">
+                    </div>
+
                     <!-- input for number of stocks user owns -->
                     <div class="ui input focus">
-                        <input type="text" name="sharesOwned" type="submit"/
+                        <input type="text" name="sharesOwned"/
                          placeholder="Shares owned: ">
                     </div>
+
+                    <button class="ui primary button">
+                      Save
+                    </button>
+
                 </form>
 
                 </br>
@@ -83,16 +91,7 @@
                     <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
                 </form>
 
-                {% for stock in allStocks %}
-                    <h3>
-                    {{ stock.ticker }}
-                    {{ stock.companyName }}
-                    {{ stock.stockPrice }}
-                    {{ stock.ftwh }}
-                    {{ stock.ftwl }}
-                    {{ stock.dateAdded }}
-                    </h3>
-                {% endfor %}
+
             {% endif %}
 
         </div>
