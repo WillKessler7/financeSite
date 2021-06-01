@@ -47,9 +47,21 @@
             {% else %}
 
                 <!-- show user their username -->
-                <h1>Hello, {{username}}</h1>
+                <h1 class="ui header">Hello, {{username}}</h1>
+                    <div class="sub header">Please select the stocks that you
+                      own from the QQQ index by typing their tickers in. For each
+                      stock that you select, please enter the number of shares
+                      of that stock you own at the bottom of the page.</div>
 
-                </br>
+
+                <div class="ui list">
+                  {% for stock in stockIndex %}
+                    <div class="item">
+                      <div class="header">{{stock}}</div>
+                    </div>
+                </div>
+
+                {% endfor %}
 
                 <!-- this is a form for picking how many stocks of a company
                 the user owns, redirects to stockDisplay template after -->
@@ -57,11 +69,13 @@
                     {% csrf_token %}
 
                     <!-- input for number of stocks user owns -->
-                    <label for="sharesOwned">Shares Owned:</label>
-                    <input type="text" name="sharesOwned">
-                    <input type="submit">
+                    <div class="ui input focus">
+                        <input type="text" name="sharesOwned" type="submit"/
+                         placeholder="Shares owned: ">
+                    </div>
                 </form>
 
+                </br>
 
                 <!-- logout button in case user wants to logout -->
                 <form method="POST" action="stockPick">
