@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from .models import Stock, PortEntries
-from yfinance import Ticker
+import yfinance as yf
 
 class loginView(View):
 
@@ -19,9 +19,6 @@ class loginView(View):
 
         # defines newUser as an empty string to initialize var
         newUser = ""
-
-        # this variable is equal to the total users within the site
-        numUsers = len(User.objects.all())
 
         # try to authenticate the inputed username and password
         username = request.POST['inputedUsername']
@@ -58,18 +55,12 @@ class loginView(View):
                 password = make_password(request.POST['inputedPassword']))
                 newUser.save()
 
-        # otherwise, if a sumbit button was not found,
-        else:
-            # display to screen that submit was not found
-            return HttpResponse("submit doesnt show")
-
         # save the variables of whether the user is loggedin and the username
         # to the correct template
         context = {
             'loggedIn': loggedIn,
             'username': username,
             'newUser': newUser,
-            'numUsers': numUsers,
         }
 
         return HttpResponse(template.render(context, request))
@@ -88,6 +79,31 @@ class stockPickView(View):
         # is set to False for this variable
         urlRequest = False
 
+        # this is a var to indicate if this is the view has been accessed before
+        # and the display of the template is being repeated
+        repeat = False
+
+        if 'submit' in request.POST.keys():
+            if request.POST['submit'] == "save":
+                repeat = True
+                template = loader.get_template('analyticals/stockPickView.html')
+
+            # if the user clicked on the logout button,
+            elif 'logoutButton' in request.POST.keys():
+                # redirect to login view
+                return redirect("loginView")
+
+            # if the user wanted to move on by submitting their data,
+            else:
+                # repeat already false so no need to reassign to same thing
+                # redirect to the next template
+                template = loader.get_template('analyticals/stockDisplayView.html')
+
+
+
+        # initializes a variable used in a for loop later
+        stockQuote = 0
+
 
         """ program will iterate through the QQQ stock index and will show the
         stock ticker and company name to the user and the user can select if
@@ -105,43 +121,33 @@ class stockPickView(View):
         "XLNX", "INCY", "CERN", "MCHP", "CPRT", "CTXS", "SWKS", "DLTR", "BMRN", \
         "ZM", "CHKP", "CDW", "TTWO", "MXIM", "ULTA", "WDC", "NTAP", "FOXA"]
 
-        stockQuote = yfinance.Ticker(symbol)
+        # for each ticker (aka symbol) within the above list of stocks,
+        for symbol in stockIndex:
 
-        # stock ticker
-        stock.ticker = stockQuote.info["symbol"]
+            # assign stockQuote to specify which ticker to search for the API
+            stockQuote = yf.Ticker(symbol)
 
-        # name of the company
-        stock.companyName = str(stockQuote.info["shortName"])
+            # create a stock object with all of the data filled from the API
+            stock = Stock.objects.create(ticker = symbol, companyName = \
+            str(stockQuote.info["shortName"]), stockPrice = \
+            float(stockQuote.info["regularMarketOpen"]), ftwh = \
+            float(stockQuote.info["fiftyTwoWeekHigh"]), \
+            ftwl = float(stockQuote.info["fiftyTwoWeekLow"]), \
+            companyDescrip = str(stockQuote.info["longBuisnessSummary"]))
 
-        # stock price
-        stock.stockPrice = float(stockQuote.info["regularMarketOpen"])
-        # fifty two week high
-        stock.ftwh = float(stockQuote.info["fiftyTwoWeekHigh"])
-        # fifty two week low
-        stock.ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
+            # save object to models
+            stock.save()
 
-        # date stock was added
-        stock.dateAdded = datetime.timezone.now()
-
-        # set allStocks as a JSON object containing all of the information
-        # regarding the different stock data
-
-        allStocks = Stock.objects.all()
         context = {
             'allStocks': allStocks,
-            'urlRequest': urlRequest
+            'urlRequest': urlRequest,
+            'stockIndex': stockIndex,
+            'tickers': tickers,
+            'repeat': repeat,
          }
 
 
-
-        # checks if the form submission was for logging out
-        if 'logoutButton' in request.POST.keys():
-            # redirect to login view
-            return redirect("loginView")
-
-        else:
-            template = loader.get_template('analyticals/stockDisplayView.html')
-            return HttpResponse(template.render(context, request))
+        return HttpResponse(template.render(context, request))
 
     def get(self, request):
         template = loader.get_template('analyticals/stockPickView.html')
@@ -151,8 +157,10 @@ class stockPickView(View):
 
 class stockDisplayView(View):
 
-
     def post(self, request):
+
+        # this variable is equal to the total users within the site
+        numUsers = len(User.objects.all())
 
         # this view is only gotten to through post unless searched for so default
         # is set to False for this variable
@@ -164,15 +172,12 @@ class stockDisplayView(View):
             # redirect to login view
             return redirect("loginView")
 
-        else:
-            pass
-
-            # will work on the other case later
-            template = loader.get_template('analyticals/stockDisplayView.html')
-            context = {
-            'urlRequest': urlRequest,
-            }
-            return HttpResponse(template.render(context, request))
+        template = loader.get_template('analyticals/stockDisplayView.html')
+        context = {
+        'urlRequest': urlRequest,
+        'numUsers': numUsers,
+        }
+        return HttpResponse(template.render(context, request))
 
     def get(self, request):
         # because this request can only be acheived by searching the url,
