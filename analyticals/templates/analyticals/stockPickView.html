@@ -44,71 +44,77 @@
             <!-- otherwise, -->
             {% else %}
 
-                <!-- if this is the user's first time seeing this view -->
-                {% if repeat != False %}
+                    <!-- if this is the user's first time seeing this view, -->
+                    {% if repeat != False %}
 
-                    <!-- show user their username -->
-                    <h1 class="ui header">Welcome, {{ username }}</h1>
+                        <!-- show user their username -->
+                        <h1 class="ui header">Welcome, {{ username }}</h1>
 
-                {% endif %}
+                        <form method="POST" action="stockPick">
+                            {% csrf_token %}
+                            <button type="submit" class="ui primary basic button" name="submit" value="loadButton">Load Stock Data</button>
+                        </form>
 
-                    <div class="sub header">Please select the stocks that you
-                      own from the QQQ index by typing their tickers in. For each
-                      stock that you select, please enter the number of shares
-                      of that stock you own. Click the "Add another stock" button
-                      if you still would like to add more stocks and click the
-                      "Submit" button once you would like to move on to the next
-                      page.</div>
+                    {% else %}
 
-                    <div class="ui list">
-                    <!-- for every stock in the stock index -->
-                    {% for symbol in symbols %}
-                        <div class="item">
-                            <div class="header">{{ symbol }} known as {{ companyNames }}</div>
-                        {{ companyDescrips }}
-                        {{ total += 1} }
-                        </div>
-                    {% endfor %}
-                    </div>
+                        <div class="sub header">Please select the stocks that you
+                          own from the QQQ index by typing their tickers in. For each
+                          stock that you select, please enter the number of shares
+                          of that stock you own. Click the "Add another stock" button
+                          if you still would like to add more stocks and click the
+                          "Submit" button once you would like to move on to the next
+                          page.</div>
 
-                    <!-- this is a form for picking how many stocks of a company
-                    the user owns, redirects to stockDisplay template after -->
-                    <form method="POST" action="stockPick">
-                        {% csrf_token %}
 
-                        <!-- input for which stock user owns -->
-                        <div class="ui input focus">
-                            <input type="text" name="tickerInput" placeholder="Stock Ticker:">
+                        <div class="ui list">
+                        <!-- for every stock in the stock index -->
+                        {% for symbol in symbols %}
+                            <div class="item">
+                                <div class="header">{{ symbol }} known as {{ companyNames[symbol] }}</div>
+                            {{ companyDescrips[symbol] }}
+                            </div>
+                        {% endfor %}
                         </div>
 
-                        <!-- input for number of stocks user owns -->
-                        <div class="ui input focus">
-                            <input type="text" name="sharesOwned"/
-                             placeholder="Shares owned: ">
-                        </div>
+                        <!-- this is a form for picking how many stocks of a company
+                        the user owns, redirects to stockDisplay template after -->
+                        <form method="POST" action="stockPick">
+                            {% csrf_token %}
 
-                        <!-- this button refreshes the page to allow for another
-                        stock selection -->
-                        <button class="ui primary button" type="submit" value="save" name="submit">
-                          Add another stock
-                        </button>
+                            <!-- input for which stock user owns -->
+                            <div class="ui input focus">
+                                <input type="text" name="tickerInput" placeholder="Stock Ticker:">
+                            </div>
+
+                            <!-- input for number of stocks user owns -->
+                            <div class="ui input focus">
+                                <input type="text" name="sharesOwned"/
+                                 placeholder="Shares owned: ">
+                            </div>
+
+                            <!-- this button refreshes the page to allow for another
+                            stock selection -->
+                            <button class="ui primary button" type="submit" value="save" name="submit">
+                              Add another stock
+                            </button>
+
+                            </br>
+
+                            <!-- button used to submit all stock data-->
+                            <button class="ui secondary basic button" type="submit" value="turnIn" name="submit">
+                              Submit
+                            </button>
+
+                        </form>
 
                         </br>
 
-                        <!-- button used to submit all stock data-->
-                        <button class="ui secondary basic button" type="submit" value="turnIn" name="submit">
-                          Submit
-                        </button>
-
-                    </form>
-
-                    </br>
-
-                    <!-- logout button in case user wants to logout -->
-                    <form method="POST" action="stockPick">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
-                    </form>
+                        <!-- logout button in case user wants to logout -->
+                        <form method="POST" action="stockPick">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
+                        </form>
+                    {% endif %}
 
 
 
