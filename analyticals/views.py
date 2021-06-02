@@ -83,26 +83,25 @@ class stockPickView(View):
         # and the display of the template is being repeated
         repeat = False
 
+
+        # checks if the form submission was for logging out
+        if 'logoutButton' in request.POST.keys():
+            # redirect to login view
+            return redirect("loginView")
+
         if 'submit' in request.POST.keys():
             if request.POST['submit'] == "save":
                 repeat = True
                 template = loader.get_template('analyticals/stockPickView.html')
 
-            # if the user clicked on the logout button,
-            elif 'logoutButton' in request.POST.keys():
-                # redirect to login view
-                return redirect("loginView")
-
             # if the user wanted to move on by submitting their data,
-            else:
+            elif request.POST['submit'] == "turnIn":
                 # repeat already false so no need to reassign to same thing
                 # redirect to the next template
                 template = loader.get_template('analyticals/stockDisplayView.html')
 
-
-
         # initializes a variable used in a for loop later
-        stockQuote = 0
+        stockQuote = ""
 
 
         """ program will iterate through the QQQ stock index and will show the
@@ -121,11 +120,35 @@ class stockPickView(View):
         "XLNX", "INCY", "CERN", "MCHP", "CPRT", "CTXS", "SWKS", "DLTR", "BMRN", \
         "ZM", "CHKP", "CDW", "TTWO", "MXIM", "ULTA", "WDC", "NTAP", "FOXA"]
 
+        # variable used later for iterating through length of stock index
+        indexLength = len(stockIndex)
+
+        # the following are lists for each of the models so they can be in
+        # parallel for utilization in the templates
+        symbols = []
+        companyNames = []
+        stockPrices = []
+        ftwhs = []
+        ftwls = []
+        companyDescrips = []
+
         # for each ticker (aka symbol) within the above list of stocks,
         for symbol in stockIndex:
 
             # assign stockQuote to specify which ticker to search for the API
             stockQuote = yf.Ticker(symbol)
+
+            ticker = symbol
+
+            companyName = str(stockQuote.info["shortName"])
+
+            stockPrice = float(stockQuote.info["regularMarketOpen"])
+
+            ftwh = float(stockQuote.info["fiftyTwoWeekHigh"])
+
+            ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
+
+            companyDescrip = str(stockQuote.info["longBusinessSummary"])
 
             # create a stock object with all of the data filled from the API
             stock = Stock.objects.create(ticker = symbol, companyName = \
@@ -133,17 +156,39 @@ class stockPickView(View):
             float(stockQuote.info["regularMarketOpen"]), ftwh = \
             float(stockQuote.info["fiftyTwoWeekHigh"]), \
             ftwl = float(stockQuote.info["fiftyTwoWeekLow"]), \
-            companyDescrip = str(stockQuote.info["longBuisnessSummary"]))
+            companyDescrip = str(stockQuote.info["longBusinessSummary"]))
 
             # save object to models
             stock.save()
 
+            # append each data point to its respective list
+            symbols.append(symbol)
+            companyNames.append(companyName)
+            stockPrices.append(stockPrice)
+            ftwhs.append(ftwh)
+            ftwls.append(ftwl)
+            companyDescrips.append(companyDescrip)
+
+        total = 0
+        symbol = symbols[total]
+        companyName = companyNames[total]
+        companyDescrip = companyDescrips[total]
+
         context = {
-            'allStocks': allStocks,
             'urlRequest': urlRequest,
             'stockIndex': stockIndex,
-            'tickers': tickers,
             'repeat': repeat,
+            'symbols': symbols,
+            'companyNames': companyNames,
+            'stockPrices': stockPrices,
+            'ftwhs': ftwhs,
+            'ftwls': ftwls,
+            'companyDescrips': companyDescrips,
+            'indexLength': indexLength,
+            'total': total,
+            'symbol': symbol,
+            'companyName': companyName,
+            'companyDescrip': companyDescrip,
          }
 
 
