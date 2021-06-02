@@ -16,10 +16,9 @@ class Stock(models.Model):
     # 52 week low
     ftwl = models.DecimalField(max_digits=10, decimal_places=2)
     # company description
-    companyDescrip = models.CharField(max_length=10000)
+    companyDescrip = models.CharField(max_length=100000)
 
 
-    pass
 
 class PortEntries(models.Model):
     """
@@ -31,5 +30,3 @@ class PortEntries(models.Model):
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     sharesOwned = models.IntegerField(default=0)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    pass
