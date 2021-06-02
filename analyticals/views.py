@@ -20,7 +20,6 @@ class loginView(View):
         # defines newUser as an empty string to initialize var
         newUser = ""
 
-        # try to authenticate the inputed username and password
         username = request.POST['inputedUsername']
         password = request.POST['inputedPassword']
 
@@ -29,6 +28,7 @@ class loginView(View):
         if 'submit' in request.POST.keys():
             if request.POST['submit'] == 'login':
 
+                # try to authenticate the inputed username and password
                 user = authenticate(username=username, password=password)
 
                 # if the user was found,
@@ -83,22 +83,17 @@ class stockPickView(View):
         # and the display of the template is being repeated
         repeat = False
 
+        # here is a list of the number of shares the user has for each stock
+        shares = []
 
-        # checks if the form submission was for logging out
-        if 'logoutButton' in request.POST.keys():
-            # redirect to login view
-            return redirect("loginView")
+        # list of tickers of stocks that user owns
+        userStocks = []
 
-        if 'submit' in request.POST.keys():
-            if request.POST['submit'] == "save":
-                repeat = True
-                template = loader.get_template('analyticals/stockPickView.html')
+        # initializes variable used later for tracking number of user shares
+        numShares = 0
 
-            # if the user wanted to move on by submitting their data,
-            elif request.POST['submit'] == "turnIn":
-                # repeat already false so no need to reassign to same thing
-                # redirect to the next template
-                template = loader.get_template('analyticals/stockDisplayView.html')
+        # this var indicates if the user has failed to correctly enter a ticker
+        input = True
 
         # initializes a variable used in a for loop later
         stockQuote = ""
@@ -110,15 +105,21 @@ class stockPickView(View):
 
         # QQQ stock Index stocks that have full data with API
         stockIndex = ["THO", "MSFT", "AAPL", "AMZN", "FB", "GOOGL", "GOOG", "NFLX",\
-        "NVDA", "PEP", "ADBE", "CSCO", "PYPL", "TSLA", "AMGN", "COST",\
+        "NVDA", "PEP"]
+
+
+        """, "ADBE", "CSCO", "PYPL", "TSLA", "AMGN", "COST",\
         "AVGO", "TXN", "GILD", "QCOM", "SBUX", "TMUS", "INTU", "FISV",\
-        "ADP", "AMD", "REGN", "BKNG", "ATVI", "BIIB", "CSX",\
+        "ADP", "AMD", "REGN", "BKNG", "ATVI", "BIIB", "CSX"]"""
+
+
+        """\
         "ILMN", "JD", "ADSK", "ADI", "MELI", "WBA", "KHC", "LRCX", "EXC",\
         "EA", "EBAY", "ROST", "CTSH", "ORLY", "SGEN", "NXPI",\
         "BIDU", "MAR", "KLAC", "WDAY", "VRSK", "SIRI", "NTES", "VRSN",\
         "CSGP", "PCAR", "SNPS", "ANSS", "CDNS", "SPLK", "CTAS", "FAST",\
         "XLNX", "INCY", "CERN", "MCHP", "CPRT", "CTXS", "SWKS", "DLTR", "BMRN", \
-        "ZM", "CHKP", "CDW", "TTWO", "MXIM", "ULTA", "WDC", "NTAP", "FOXA"]
+        "ZM", "CHKP", "CDW", "TTWO", "MXIM", "ULTA", "WDC", "NTAP", "FOXA"]"""
 
         # variable used later for iterating through length of stock index
         indexLength = len(stockIndex)
@@ -174,6 +175,54 @@ class stockPickView(View):
         companyName = companyNames[total]
         companyDescrip = companyDescrips[total]
 
+        # checks if the form submission was for logging out
+        if 'logoutButton' in request.POST.keys():
+            # redirect to login view
+            return redirect("loginView")
+
+
+        # if the user clicked on a button in the template,
+        if 'submit' in request.POST.keys():
+
+            # if the button was to save the user's data,
+            if request.POST['submit'] == "save":
+
+                # adds the number of shares user owns to a list of them
+                # request.POST['sharesOwned'] is TWO KEYS NEED TO FIX!!!
+
+                # if the inputed ticker matches one of the symbols
+                if (request.POST['tickerInput']).upper() in symbols:
+                    shares.append(request.POST['sharesOwned'])
+
+                    # adds inputed ticker to a list of user's stock tickers
+                    userStocks.append(request.POST['tickerInput'])
+
+                    # create object for number of shares user owns
+                    numShares = PortEntries.objects.create(request.POST['sharesOwned'])
+                    # saves object to models
+                    numShares.save()
+
+                # otherwise,
+                else:
+                    # user entered an incorrect input
+                    input = False
+
+                # load the same template
+                template = loader.get_template('analyticals/stockPickView.html')
+
+            # if the button clicked was to load the data,
+            elif request.POST['submit'] == "loadButton":
+
+                # load the same template
+                template = loader.get_template('analyticals/stockPickView.html')
+
+            # if the user wanted to move on by submitting their data,
+            elif request.POST['submit'] == "turnIn":
+                # repeat already false so no need to reassign to same thing
+                # redirect to the next template
+                template = loader.get_template('analyticals/stockDisplayView.html')
+
+
         context = {
             'urlRequest': urlRequest,
             'stockIndex': stockIndex,
@@ -189,6 +238,9 @@ class stockPickView(View):
             'symbol': symbol,
             'companyName': companyName,
             'companyDescrip': companyDescrip,
+            'shares': shares,
+            'userStocks': userStocks,
+            'input': input,
          }
 
 
