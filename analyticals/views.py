@@ -121,17 +121,11 @@ class stockPickView(View):
         "XLNX", "INCY", "CERN", "MCHP", "CPRT", "CTXS", "SWKS", "DLTR", "BMRN", \
         "ZM", "CHKP", "CDW", "TTWO", "MXIM", "ULTA", "WDC", "NTAP", "FOXA"]"""
 
-        # variable used later for iterating through length of stock index
-        indexLength = len(stockIndex)
 
-        # the following are lists for each of the models so they can be in
-        # parallel for utilization in the templates
-        symbols = []
-        companyNames = []
-        stockPrices = []
-        ftwhs = []
-        ftwls = []
-        companyDescrips = []
+        # the following is a dictionary that will be used to hold data for a
+        # template
+        stockDict = {"symbol":[], "companyName":[], "stockPrice":[], "ftwh":[]\
+        "ftwl":[], "companyDescrip":[]}
 
         # for each ticker (aka symbol) within the above list of stocks,
         for symbol in stockIndex:
@@ -152,23 +146,17 @@ class stockPickView(View):
             companyDescrip = str(stockQuote.info["longBusinessSummary"])
 
             # create a stock object with all of the data filled from the API
-            stock = Stock.objects.create(ticker = symbol, companyName = \
-            str(stockQuote.info["shortName"]), stockPrice = \
-            float(stockQuote.info["regularMarketOpen"]), ftwh = \
-            float(stockQuote.info["fiftyTwoWeekHigh"]), \
-            ftwl = float(stockQuote.info["fiftyTwoWeekLow"]), \
-            companyDescrip = str(stockQuote.info["longBusinessSummary"]))
-
-            # save object to models
-            stock.save()
+            stock = Stock.objects.create(ticker=ticker, companyName=\
+            companyName, stockPrice=stockPrice, ftwh=ftwh, ftwl=ftwl,\
+            companyDescrip = companyDescrip))
 
             # append each data point to its respective list
-            symbols.append(symbol)
-            companyNames.append(companyName)
-            stockPrices.append(stockPrice)
-            ftwhs.append(ftwh)
-            ftwls.append(ftwl)
-            companyDescrips.append(companyDescrip)
+            stockDict["symbol"].append(symbol)
+            stockDict["companyNames"].append(companyName)
+            stockDict["stockPrice"].append(stockPrice)
+            stockDict["ftwh"].append(ftwh)
+            stockdict["ftwl"].append(ftwl)
+            stockDict["companyDescrip"].append(companyDescrip)
 
         total = 0
         symbol = symbols[total]
@@ -184,34 +172,14 @@ class stockPickView(View):
         # if the user clicked on a button in the template,
         if 'submit' in request.POST.keys():
 
-            # if the button was to save the user's data,
-            if request.POST['submit'] == "save":
-
-                # adds the number of shares user owns to a list of them
-                # request.POST['sharesOwned'] is TWO KEYS NEED TO FIX!!!
-
-                # if the inputed ticker matches one of the symbols
-                if (request.POST['tickerInput']).upper() in symbols:
-                    shares.append(request.POST['sharesOwned'])
-
-                    # adds inputed ticker to a list of user's stock tickers
-                    userStocks.append(request.POST['tickerInput'])
-
-                    # create object for number of shares user owns
-                    numShares = PortEntries.objects.create(request.POST['sharesOwned'])
-                    # saves object to models
-                    numShares.save()
-
-                # otherwise,
-                else:
-                    # user entered an incorrect input
-                    input = False
+            # if the button clicked was to load the data,
+            if request.POST['submit'] == "loadButton":
 
                 # load the same template
                 template = loader.get_template('analyticals/stockPickView.html')
 
-            # if the button clicked was to load the data,
-            elif request.POST['submit'] == "loadButton":
+            # if the button was to save the user's data,
+            elif request.POST['submit'] == "save":
 
                 # load the same template
                 template = loader.get_template('analyticals/stockPickView.html')
@@ -220,7 +188,30 @@ class stockPickView(View):
             elif request.POST['submit'] == "turnIn":
                 # repeat already false so no need to reassign to same thing
                 # redirect to the next template
-                template = loader.get_template('analyticals/stockDisplayView.html')
+
+                # if the inputed ticker matches one of the symbols,
+                if (request.POST['tickerInput']).upper() in symbols:
+                    shares.append(request.POST['sharesOwned'])
+
+                    # adds inputed ticker to a list of user's stock tickers
+                    userStocks.append(request.POST['tickerInput'])
+
+                    stock = Stock.objects.get(ticker = request.POST['tickerInput'])
+                    portEntry = PortEntries(stock = stock, sharesOwned = request.POST['sharesOwned'],\
+                    user = request.user)
+                    portEntry.save()
+                    # saves object to models
+                    numShares.save()
+
+                    # load the next template because user is done inputing data
+                    template = loader.get_template('analyticals/stockDisplayView.html')
+
+                # otherwise,
+                else:
+                    # user entered an incorrect input
+                    input = False
+                    # reload same template till they get a correct input
+                    template = loader.get_template('analyticals/stockPickView.html')
 
 
         context = {
