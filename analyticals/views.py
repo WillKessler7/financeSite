@@ -158,11 +158,6 @@ class stockPickView(View):
             stockdict["ftwl"].append(ftwl)
             stockDict["companyDescrip"].append(companyDescrip)
 
-        total = 0
-        symbol = symbols[total]
-        companyName = companyNames[total]
-        companyDescrip = companyDescrips[total]
-
         # checks if the form submission was for logging out
         if 'logoutButton' in request.POST.keys():
             # redirect to login view
@@ -196,12 +191,14 @@ class stockPickView(View):
                     # adds inputed ticker to a list of user's stock tickers
                     userStocks.append(request.POST['tickerInput'])
 
+                    # defines stock for the creation of the portEntry object
                     stock = Stock.objects.get(ticker = request.POST['tickerInput'])
+
+                    # creates portEntry object
                     portEntry = PortEntries(stock = stock, sharesOwned = request.POST['sharesOwned'],\
                     user = request.user)
+                    # save object to models
                     portEntry.save()
-                    # saves object to models
-                    numShares.save()
 
                     # load the next template because user is done inputing data
                     template = loader.get_template('analyticals/stockDisplayView.html')
@@ -210,7 +207,7 @@ class stockPickView(View):
                 else:
                     # user entered an incorrect input
                     input = False
-                    # reload same template till they get a correct input
+                    # reload same template until they get a correct input
                     template = loader.get_template('analyticals/stockPickView.html')
 
 
@@ -218,17 +215,7 @@ class stockPickView(View):
             'urlRequest': urlRequest,
             'stockIndex': stockIndex,
             'repeat': repeat,
-            'symbols': symbols,
-            'companyNames': companyNames,
-            'stockPrices': stockPrices,
-            'ftwhs': ftwhs,
-            'ftwls': ftwls,
-            'companyDescrips': companyDescrips,
-            'indexLength': indexLength,
-            'total': total,
-            'symbol': symbol,
-            'companyName': companyName,
-            'companyDescrip': companyDescrip,
+            'stockDict': stockDict,
             'shares': shares,
             'userStocks': userStocks,
             'input': input,

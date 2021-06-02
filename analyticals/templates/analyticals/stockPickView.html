@@ -57,21 +57,30 @@
 
                     {% else %}
 
-                        <div class="sub header">Please select the stocks that you
-                          own from the QQQ index by typing their tickers in. For each
-                          stock that you select, please enter the number of shares
-                          of that stock you own. Click the "Add another stock" button
-                          if you still would like to add more stocks and click the
-                          "Submit" button once you would like to move on to the next
-                          page.</div>
+                        <!-- if the user has not yet entered a false input -->
+                        {% if input != False %}
+                            <div class="sub header">Please select the stocks that you
+                              own from the QQQ index by typing their tickers in. For each
+                              stock that you select, please enter the number of shares
+                              of that stock you own. Click the "Add another stock" button
+                              if you still would like to add more stocks and click the
+                              "Submit" button once you would like to move on to the next
+                              page.</div>
+
+                        <!-- otherwise, if the user has incorrectly entered an input, -->
+                        {% else %}
+                            <div class="sub header">Please correctly enter one of the following
+                                tickers.</div>
+
+                        {% endif %}
 
 
                         <div class="ui list">
                         <!-- for every stock in the stock index -->
                         {% for symbol in symbols %}
                             <div class="item">
-                                <div class="header">{{ symbol }} known as {{ companyNames[symbol] }}</div>
-                            {{ companyDescrips[symbol] }}
+                                <div class="header">{{ symbol }} known as {{ companyName }}</div>
+                            {{ companyDescrip }}
                             </div>
                         {% endfor %}
                         </div>
@@ -114,6 +123,7 @@
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
                         </form>
+
                     {% endif %}
 
 
