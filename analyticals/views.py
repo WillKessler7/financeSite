@@ -75,6 +75,14 @@ class stockPickView(View):
 
     def post(self, request):
 
+        # checks if the form submission was for logging out
+        # because the user doesn't submit anything else when they log out, it
+        # makes sense in terms of efficientcy to check if the user logged out first
+        # instead of loading data which the user won't use
+        if 'logoutButton' in request.POST.keys():
+            # redirect to login view
+            return redirect("loginView")
+
         # this view is only gotten to through post unless searched for so default
         # is set to False for this variable
         urlRequest = False
@@ -124,8 +132,10 @@ class stockPickView(View):
 
         # the following is a dictionary that will be used to hold data for a
         # template
-        stockDict = {"symbol":[], "companyName":[], "stockPrice":[], "ftwh":[]\
+        stockDict = {"symbol":[], "companyName":[], "stockPrice":[], "ftwh":[],\
         "ftwl":[], "companyDescrip":[]}
+
+
 
         # for each ticker (aka symbol) within the above list of stocks,
         for symbol in stockIndex:
@@ -137,31 +147,26 @@ class stockPickView(View):
 
             companyName = str(stockQuote.info["shortName"])
 
-            stockPrice = float(stockQuote.info["regularMarketOpen"])
-
-            ftwh = float(stockQuote.info["fiftyTwoWeekHigh"])
-
-            ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
-
             companyDescrip = str(stockQuote.info["longBusinessSummary"])
 
             # create a stock object with all of the data filled from the API
             stock = Stock.objects.create(ticker=ticker, companyName=\
             companyName, stockPrice=stockPrice, ftwh=ftwh, ftwl=ftwl,\
-            companyDescrip = companyDescrip))
+            companyDescrip = companyDescrip)
+
 
             # append each data point to its respective list
             stockDict["symbol"].append(symbol)
-            stockDict["companyNames"].append(companyName)
-            stockDict["stockPrice"].append(stockPrice)
-            stockDict["ftwh"].append(ftwh)
-            stockdict["ftwl"].append(ftwl)
+            stockDict["companyName"].append(companyName)
+            #stockDict["stockPrice"].append(stockPrice)
+            #stockDict["ftwh"].append(ftwh)
+            #stockDict["ftwl"].append(ftwl)
             stockDict["companyDescrip"].append(companyDescrip)
 
-        # checks if the form submission was for logging out
-        if 'logoutButton' in request.POST.keys():
-            # redirect to login view
-            return redirect("loginView")
+        newCompanyNames = []
+        for name in companyNames:
+            newCompanyNames.append({"name": name})
+
 
 
         # if the user clicked on a button in the template,
@@ -234,18 +239,65 @@ class stockDisplayView(View):
 
     def post(self, request):
 
+        # checks if the form submission was for logging out
+        # because the user doesn't submit anything else when they log out, it
+        # makes sense in terms of efficientcy to check if the user logged out first
+        # instead of loading data which the user won't use
+        if 'logoutButton' in request.POST.keys():
+            # redirect to login view
+            return redirect("loginView")
+
         # this variable is equal to the total users within the site
         numUsers = len(User.objects.all())
+
+        # initializes a variable used in a for loop later
+        stockQuote = ""
+
+        stockValues = []
+
+        stockPrices = []
+
+        ftwhs = []
+
+        ftwls = []
+
+        portfolioValue = 0
+
+        # for every stock in the user's stocks,
+        for i in range(len(userStocks)):
+
+            # assign stockQuote to specify which ticker to search for the API
+            stockQuote = yf.Ticker(symbols[i])
+
+            # get the stock price of that stock from the API
+            stockPrice = float(stockQuote.info["regularMarketOpen"])
+            # append it to a list of stock prices to display to user
+            stockPrices.append(stockPrice)
+
+            # get the fifty two week high from the API
+            ftwh = float(stockQuote.info["fiftyTwoWeekHigh"])
+            # append it to a list of fifty two week highs to later display to user
+            ftwhs.append(ftwh)
+
+            # get the
+            ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
+            # append it to a list of fifty two week lows to display to user
+            ftwls.append(ftwl)
+
+            # get the total value of this individual stock that the user owns
+            # by multiplying the price of one share by the number of shares
+            # user owns
+            stockValue = stockPrice * shares[i]
+            # add the total value to a list of total values to be shown to user
+            stockValues.append(stockValue)
+
+            # accumulate the total value of the users portfolio by adding the
+            # stocks they own together
+            portfolioValue += stockValue
 
         # this view is only gotten to through post unless searched for so default
         # is set to False for this variable
         urlRequest = False
-
-
-        # checks if the form submission was for logging out
-        if 'logoutButton' in request.POST.keys():
-            # redirect to login view
-            return redirect("loginView")
 
         template = loader.get_template('analyticals/stockDisplayView.html')
         context = {

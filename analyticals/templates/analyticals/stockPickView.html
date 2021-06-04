@@ -77,10 +77,10 @@
 
                         <div class="ui list">
                         <!-- for every stock in the stock index -->
-                        {% for symbol in symbols %}
+                        {% for stock in stockIndex %}
                             <div class="item">
-                                <div class="header">{{ symbol }} known as {{ companyName }}</div>
-                            {{ companyDescrip }}
+                                <div class="header">{{ stock }} known as {{ companyNames[i] }}</div>
+                            {{ companyDescrips[i] }}
                             </div>
                         {% endfor %}
                         </div>
