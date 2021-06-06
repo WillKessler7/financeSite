@@ -29,107 +29,97 @@
                 <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
             </div>
 
-            <!-- if the url was typed out into search bar rather than achevied
-            through path -->
-            {% if urlRequest %}
 
-                <!-- displays error message -->
-                <h3 class="text-danger">Sorry! This link is not supposed to be reached. Please click
-                     on the button below to be redirected to the correct page.</h3>
+                <!-- if the user has not yet entered a false input -->
+                {% if input != False %}
+                    <div class="sub header">Please select the stocks that you
+                      own from the QQQ index by typing their tickers in. For each
+                      stock that you select, please enter the number of shares
+                      of that stock you own. Click the "Add another stock" button
+                      if you still would like to add more stocks and click the
+                      "Submit" button once you would like to move on to the next
+                      page.</div>
 
-                <!-- links the button to the login view like it should go to -->
-                <a href="loginView"> <button type="submit" value='link' class="btn btn-success" name="submit">Go to new page</button></a>
+                <!-- otherwise, if the user has incorrectly entered an input, -->
+                {% else %}
+                    <div class="sub header">Please correctly enter one of the following
+                        tickers.</div>
 
-
-            <!-- otherwise, -->
-            {% else %}
-
-                    <!-- if this is the user's first time seeing this view, -->
-                    {% if repeat != False %}
-
-                        <!-- show user their username -->
-                        <h1 class="ui header">Welcome, {{ username }}</h1>
-
-                        <form method="POST" action="stockPick">
-                            {% csrf_token %}
-                            <button type="submit" class="ui primary basic button" name="submit" value="loadButton">Load Stock Data</button>
-                        </form>
-
-                    {% else %}
-
-                        <!-- if the user has not yet entered a false input -->
-                        {% if input != False %}
-                            <div class="sub header">Please select the stocks that you
-                              own from the QQQ index by typing their tickers in. For each
-                              stock that you select, please enter the number of shares
-                              of that stock you own. Click the "Add another stock" button
-                              if you still would like to add more stocks and click the
-                              "Submit" button once you would like to move on to the next
-                              page.</div>
-
-                        <!-- otherwise, if the user has incorrectly entered an input, -->
-                        {% else %}
-                            <div class="sub header">Please correctly enter one of the following
-                                tickers.</div>
-
-                        {% endif %}
+                {% endif %}
 
 
-                        <div class="ui list">
-                        <!-- for every stock in the stock index -->
-                        {% for stock in stockIndex %}
-                            <div class="item">
-                                <div class="header">{{ stock }} known as {{ companyNames[i] }}</div>
-                            {{ companyDescrips[i] }}
-                            </div>
-                        {% endfor %}
-                        </div>
+                <div class="ui list">
+                <!-- for every stock in the stock index -->
+                {% for stock in stockList %}
+                    <div class="item">
+                        <div class="header">{{ stock.ticker }} known as {{ stock.companyName }}</div>
+                    {{ stock.companyDescrip }}
+                    </div>
+                {% endfor %}
+                </div>
 
-                        <!-- this is a form for picking how many stocks of a company
-                        the user owns, redirects to stockDisplay template after -->
-                        <form method="POST" action="stockPick">
-                            {% csrf_token %}
+                <!-- this is a form for picking how many stocks of a company
+                the user owns, redirects to stockDisplay template after -->
+                <form method="POST" action="stockPick">
+                    {% csrf_token %}
 
-                            <!-- input for which stock user owns -->
-                            <div class="ui input focus">
-                                <input type="text" name="tickerInput" placeholder="Stock Ticker:">
-                            </div>
+                    <!-- input for which stock user owns -->
+                    <div class="ui input focus">
+                        <input type="text" name="tickerInput" id="tickerInput" placeholder="Stock Ticker:">
+                    </div>
 
-                            <!-- input for number of stocks user owns -->
-                            <div class="ui input focus">
-                                <input type="text" name="sharesOwned"/
-                                 placeholder="Shares owned: ">
-                            </div>
+                    <!-- input for number of stocks user owns -->
+                    <div class="ui input focus">
+                        <input type="text" name="sharesOwned" id="sharesOwned"/
+                         placeholder="Shares owned: ">
+                    </div>
 
-                            <!-- this button refreshes the page to allow for another
-                            stock selection -->
-                            <button class="ui primary button" type="submit" value="save" name="submit">
-                              Add another stock
-                            </button>
+                    <!-- this button refreshes the page to allow for another
+                    stock selection -->
+                    <button class="ui primary button" type="submit" value="save" name="addStock" onclick="addSymbol()">
+                      Add another stock
+                    </button>
 
-                            </br>
+                    </br>
 
-                            <!-- button used to submit all stock data-->
-                            <button class="ui secondary basic button" type="submit" value="turnIn" name="submit">
-                              Submit
-                            </button>
+                    <!-- button used to submit all stock data-->
+                    <button class="ui secondary basic button" type="submit" value="turnIn" name="turnIn">
+                      Submit
+                    </button>
 
-                        </form>
+                </form>
 
-                        </br>
+                </br>
 
-                        <!-- logout button in case user wants to logout -->
-                        <form method="POST" action="stockPick">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
-                        </form>
-
-                    {% endif %}
-
-
-
-          {% endif %}
+                <!-- logout button in case user wants to logout -->
+                <form method="POST" action="stockPick">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" name="logoutButton">Logout</button>
+                </form>
 
         </div>
     </body>
+    <script>
+
+    // makes a list to hold the data from the input
+    var symbols = [];
+
+    // this function saves the inputed data to a list
+    function addSymbol() {
+
+        // defines which input was the symbol
+        var symbol = document.getElementById("tickerInput").value;
+        // defines which input was the number of shares owned
+        var sharesOwned = document.getElementById("sharesOwned").value;
+        // adds the symbol and the number of shares owned to a list
+        symbols.push(symbol + ":" + sharesOwned);
+
+        console.log(symbols);
+
+        // clears both ticker input and shares owned
+        document.getElementById("tickerInput").value = "";
+        document.getElementById("sharesOwned").value = "";
+
+    }
+    </script>
 </html>

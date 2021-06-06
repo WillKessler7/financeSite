@@ -33,6 +33,7 @@
                 <h3>Welcome to the Kessler Finance Site! Please log in to see your
 data or create a new account by entering a username and password if you are new here.</h3>
 
+
                 <form method="POST">
                     {% csrf_token %}
 
@@ -61,13 +62,13 @@ data or create a new account by entering a username and password if you are new 
                         </div>
 
                         <!-- login button if user already has an acct -->
-                        <button class="ui secondary button" type="submit" value='login' name="submit">Login</button>
+                        <button class="ui secondary button" type="submit" value='login' name="login">Login</button>
 
 
                         <!-- create acct button if user doesn't already have one -->
-                        <button class="btn btn-success" type="submit" value='create' name="submit">Create Account</button>
+                        <button class="btn btn-success" type="submit" value='create' name="create">Create Account</button>
 
-                </form>
+                        </form>
 
             </div>
 

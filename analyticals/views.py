@@ -25,31 +25,30 @@ class loginView(View):
 
 
         # if the username imported from template's form is for logging in,
-        if 'submit' in request.POST.keys():
-            if request.POST['submit'] == 'login':
+        if 'login' in request.POST.keys():
 
-                # try to authenticate the inputed username and password
-                user = authenticate(username=username, password=password)
+            # try to authenticate the inputed username and password
+            user = authenticate(username=username, password=password)
 
-                # if the user was found,
-                if user is not None:
-                    # login the user
-                    login(request, user)
-                    # set loggedIn var to true
-                    loggedIn = True
-                    # assign template to be loaded to the correct view
-                    template = loader.get_template('analyticals/stockPickView.html')
-
+            # if the user was found,
+            if user is not None:
+                # login the user
+                login(request, user)
+                # set loggedIn var to true
+                loggedIn = True
+                # assign template to be loaded to the correct view
+                template = loader.get_template('analyticals/stockLoadView.html')
 
 
 
-                # otherwise, if the user was not found,
-                else:
-                    # loads back to the loginView template
-                    template = loader.get_template('analyticals/loginView.html')
 
-            # if the form submitted is not for logging in must be for creating acct
-            elif request.POST['submit'] == 'create':
+            # otherwise, if the user was not found,
+            else:
+                # loads back to the loginView template
+                template = loader.get_template('analyticals/loginView.html')
+
+        # if the form submitted is not for logging in must be for creating acct
+        elif 'create' in request.POST.keys():
                 template = loader.get_template('analyticals/stockPickView.html')
                 newUser = User(username = request.POST['inputedUsername'],\
                 password = make_password(request.POST['inputedPassword']))
@@ -75,21 +74,14 @@ class stockPickView(View):
 
     def post(self, request):
 
-        # checks if the form submission was for logging out
+
         # because the user doesn't submit anything else when they log out, it
-        # makes sense in terms of efficientcy to check if the user logged out first
+        # makes sense in terms of efficiency to check if the user logged out first
         # instead of loading data which the user won't use
+        # checks if the form submission was for logging out
         if 'logoutButton' in request.POST.keys():
             # redirect to login view
             return redirect("loginView")
-
-        # this view is only gotten to through post unless searched for so default
-        # is set to False for this variable
-        urlRequest = False
-
-        # this is a var to indicate if this is the view has been accessed before
-        # and the display of the template is being repeated
-        repeat = False
 
         # here is a list of the number of shares the user has for each stock
         shares = []
@@ -106,14 +98,17 @@ class stockPickView(View):
         # initializes a variable used in a for loop later
         stockQuote = ""
 
+        symbols = request.POST.keys()
+        print(symbols)
 
         """ program will iterate through the QQQ stock index and will show the
         stock ticker and company name to the user and the user can select if
         they want to follow the stock and view its information """
 
         # QQQ stock Index stocks that have full data with API
-        stockIndex = ["THO", "MSFT", "AAPL", "AMZN", "FB", "GOOGL", "GOOG", "NFLX",\
-        "NVDA", "PEP"]
+        stockIndex = ["THO", "MSFT"]
+        """"MSFT", "AAPL", "AMZN", "FB", "GOOGL", "GOOG", "NFLX",\
+        "NVDA", "PEP"]"""
 
 
         """, "ADBE", "CSCO", "PYPL", "TSLA", "AMGN", "COST",\
@@ -130,12 +125,46 @@ class stockPickView(View):
         "ZM", "CHKP", "CDW", "TTWO", "MXIM", "ULTA", "WDC", "NTAP", "FOXA"]"""
 
 
-        # the following is a dictionary that will be used to hold data for a
+        # if the button clicked was to load the data,
+        if 'load' in request.POST.keys():
+            # load the same template
+            template = loader.get_template('analyticals/stockPickView.html')
+
+        # if the button was to save the user's data,
+        elif 'addStock' in request.POST.keys() or 'turnIn' in request.POST.keys():
+            # load the same template
+            template = loader.get_template('analyticals/stockPickView.html')
+
+            # if the inputed ticker matches one of the symbols,
+            if (request.POST['tickerInput']).upper() in stockIndex:
+                shares.append(request.POST['sharesOwned'])
+
+                # adds inputed ticker to a list of user's stock tickers
+                userStocks.append(request.POST['tickerInput'])
+
+                # defines stock for the creation of the portEntry object
+                #stock = Stock.objects.get(ticker=request.POST['tickerInput'])
+
+                # creates portEntry object
+                #portEntry = PortEntries.objects.create(stock=stock, sharesOwned=request.POST['sharesOwned'],\
+                #user=request.user.username)
+                # save object to models
+                #portEntry.save()
+
+                # load the next template because user is done inputing data
+                template = loader.get_template('analyticals/stockDisplayView.html')
+
+            # otherwise,
+            else:
+                # user entered an incorrect input
+                input = False
+                # reload same template until they get a correct input
+                template = loader.get_template('analyticals/stockPickView.html')
+
+
+        # the following is a list that will be used to hold data for a
         # template
-        stockDict = {"symbol":[], "companyName":[], "stockPrice":[], "ftwh":[],\
-        "ftwl":[], "companyDescrip":[]}
-
-
+        stockList = []
 
         # for each ticker (aka symbol) within the above list of stocks,
         for symbol in stockIndex:
@@ -149,78 +178,29 @@ class stockPickView(View):
 
             companyDescrip = str(stockQuote.info["longBusinessSummary"])
 
-            # create a stock object with all of the data filled from the API
-            stock = Stock.objects.create(ticker=ticker, companyName=\
-            companyName, stockPrice=stockPrice, ftwh=ftwh, ftwl=ftwl,\
-            companyDescrip = companyDescrip)
+            # assign stockQuote to specify which ticker to search for the API
+            stockQuote = yf.Ticker(symbol)
 
+            # get the stock price of that stock from the API
+            stockPrice = float(stockQuote.info["regularMarketOpen"])
 
-            # append each data point to its respective list
-            stockDict["symbol"].append(symbol)
-            stockDict["companyName"].append(companyName)
-            #stockDict["stockPrice"].append(stockPrice)
-            #stockDict["ftwh"].append(ftwh)
-            #stockDict["ftwl"].append(ftwl)
-            stockDict["companyDescrip"].append(companyDescrip)
+            # get the fifty two week high from the API
+            ftwh = float(stockQuote.info["fiftyTwoWeekHigh"])
+            # get the fifty two week low from the API
+            ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
 
-        newCompanyNames = []
-        for name in companyNames:
-            newCompanyNames.append({"name": name})
+            stock = Stock.objects.create(ticker=ticker, companyName=companyName,\
+            stockPrice=stockPrice, ftwh=ftwh, ftwl=ftwl, companyDescrip=companyDescrip)
+            stock.save()
 
-
-
-        # if the user clicked on a button in the template,
-        if 'submit' in request.POST.keys():
-
-            # if the button clicked was to load the data,
-            if request.POST['submit'] == "loadButton":
-
-                # load the same template
-                template = loader.get_template('analyticals/stockPickView.html')
-
-            # if the button was to save the user's data,
-            elif request.POST['submit'] == "save":
-
-                # load the same template
-                template = loader.get_template('analyticals/stockPickView.html')
-
-            # if the user wanted to move on by submitting their data,
-            elif request.POST['submit'] == "turnIn":
-                # repeat already false so no need to reassign to same thing
-                # redirect to the next template
-
-                # if the inputed ticker matches one of the symbols,
-                if (request.POST['tickerInput']).upper() in symbols:
-                    shares.append(request.POST['sharesOwned'])
-
-                    # adds inputed ticker to a list of user's stock tickers
-                    userStocks.append(request.POST['tickerInput'])
-
-                    # defines stock for the creation of the portEntry object
-                    stock = Stock.objects.get(ticker = request.POST['tickerInput'])
-
-                    # creates portEntry object
-                    portEntry = PortEntries(stock = stock, sharesOwned = request.POST['sharesOwned'],\
-                    user = request.user)
-                    # save object to models
-                    portEntry.save()
-
-                    # load the next template because user is done inputing data
-                    template = loader.get_template('analyticals/stockDisplayView.html')
-
-                # otherwise,
-                else:
-                    # user entered an incorrect input
-                    input = False
-                    # reload same template until they get a correct input
-                    template = loader.get_template('analyticals/stockPickView.html')
+            stockList.append({'companyName': companyName,
+                              'companyDescrip': companyDescrip,
+                              'ticker': ticker,})
 
 
         context = {
-            'urlRequest': urlRequest,
             'stockIndex': stockIndex,
-            'repeat': repeat,
-            'stockDict': stockDict,
+            'stockList': stockList,
             'shares': shares,
             'userStocks': userStocks,
             'input': input,
@@ -230,15 +210,13 @@ class stockPickView(View):
         return HttpResponse(template.render(context, request))
 
     def get(self, request):
-        template = loader.get_template('analyticals/stockPickView.html')
-        urlRequest = True
-        context = {'urlRequest': urlRequest}
+        template = loader.get_template('analyticals/urlErrorView.html')
+        context = {}
         return HttpResponse(template.render(context, request))
 
 class stockDisplayView(View):
 
     def post(self, request):
-
         # checks if the form submission was for logging out
         # because the user doesn't submit anything else when they log out, it
         # makes sense in terms of efficientcy to check if the user logged out first
@@ -247,70 +225,12 @@ class stockDisplayView(View):
             # redirect to login view
             return redirect("loginView")
 
-        # this variable is equal to the total users within the site
-        numUsers = len(User.objects.all())
-
-        # initializes a variable used in a for loop later
-        stockQuote = ""
-
-        stockValues = []
-
-        stockPrices = []
-
-        ftwhs = []
-
-        ftwls = []
-
-        portfolioValue = 0
-
-        # for every stock in the user's stocks,
-        for i in range(len(userStocks)):
-
-            # assign stockQuote to specify which ticker to search for the API
-            stockQuote = yf.Ticker(symbols[i])
-
-            # get the stock price of that stock from the API
-            stockPrice = float(stockQuote.info["regularMarketOpen"])
-            # append it to a list of stock prices to display to user
-            stockPrices.append(stockPrice)
-
-            # get the fifty two week high from the API
-            ftwh = float(stockQuote.info["fiftyTwoWeekHigh"])
-            # append it to a list of fifty two week highs to later display to user
-            ftwhs.append(ftwh)
-
-            # get the
-            ftwl = float(stockQuote.info["fiftyTwoWeekLow"])
-            # append it to a list of fifty two week lows to display to user
-            ftwls.append(ftwl)
-
-            # get the total value of this individual stock that the user owns
-            # by multiplying the price of one share by the number of shares
-            # user owns
-            stockValue = stockPrice * shares[i]
-            # add the total value to a list of total values to be shown to user
-            stockValues.append(stockValue)
-
-            # accumulate the total value of the users portfolio by adding the
-            # stocks they own together
-            portfolioValue += stockValue
-
-        # this view is only gotten to through post unless searched for so default
-        # is set to False for this variable
-        urlRequest = False
-
-        template = loader.get_template('analyticals/stockDisplayView.html')
-        context = {
-        'urlRequest': urlRequest,
-        'numUsers': numUsers,
-        }
+        context = {}
         return HttpResponse(template.render(context, request))
 
     def get(self, request):
-        # because this request can only be acheived by searching the url,
-        # the url request variable is set to True
-        urlRequest = True
+
         template = loader.get_template('analyticals/stockDisplayView.html')
         # put data in context for each view
-        context = {'urlRequest': urlRequest}
+        context = {}
         return HttpResponse(template.render(context, request))

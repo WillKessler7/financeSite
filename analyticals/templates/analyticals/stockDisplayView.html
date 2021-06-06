@@ -44,8 +44,26 @@
                 <!-- links the button to the login view like it should go to -->
                 <a href="loginView"> <button type="submit" value='link' class="btn btn-success" name="submit">Go to new page</button></a>
 
+            <!-- if this is the user's first time seeing this view, -->
+            {% elif repeat != False %}
+
+                <!-- display instruction message to user -->
+                <h1 class="ui header">Please click on the
+                button below to access your portfolio's data</h1>
+
+                <!-- form for user to click on button to load personal data -->
+                <form method="POST" action="stockPick">
+                    {% csrf_token %}
+                    <button type="submit" class="ui primary basic button" name="submit" value="loadButton">Load Personal Finance Data</button>
+                </form>}
+
             <!-- otherwise, the url was reached in the desired way -->
             {% else %}
+
+                <h3 class="ui block header">
+                Thank you for choosing Kessler Finance Site to get your stock
+                data. Below is some information regarding your portfolio and the website.
+                </h3>
 
                 <!-- displays the number of users as a statistic -->
                 <div class="ui small statistic">
@@ -56,6 +74,60 @@
                     Number of Site Users
                     </div>
                 </div>
+
+                <div class="ui list">
+                <!-- for every stock in the stock index -->
+                {% for stock in userStocks %}
+                    <div class="item">
+                        <div class="header">
+                            {{stock.ticker}}
+                        </div>
+                    </div>
+
+                    <div class="item">
+                      <div class="statistic">
+                        <div class="value">
+                          {{ stock.stockPrice }}
+                        </div>
+                        <div class="label">
+                          Stock Price
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="item">
+
+                      <div class="statistic">
+                        <div class="value">
+                          {{ stock.ftwh}}
+                        </div>
+                        <div class="label">
+                        52 Week High
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="item">
+                      <div class="statistic">
+                        <div class="value">
+                          {{ stock.ftwl}}
+                        </div>
+                        <div class="label">
+                          52 Week Low
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="item">
+                        <div class="statistic">
+                            <div class="value"
+                  </div>
+                {% endfor %}
+                </div>
+
+                <h3 class="ui bottom attached header">
+                    Your whole portfolio is worth {{portfolioValue}} dollars.
+                </h3>
 
                 <!-- has a logout button in case user wants to logout -->
                 <form method="POST" action="stockPick">

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+    <head>
+    <title>Kessler Finance Site</title>
+
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- semantic ui -->
+    <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.14/semantic.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="jumbotron jumbotron-fluid">
+                <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
+            </div>
+            <!-- show user their username -->
+            <h1 class="ui header">Welcome, {{ request.user.username }}</h1>
+
+            <form method="POST" action="stockPick">
+                {% csrf_token %}
+                <button type="submit" class="ui primary basic button" name="load" value="loadButton">Load Stock Data</button>
+            </form>
+        </div>
+    </body>
+</html>
