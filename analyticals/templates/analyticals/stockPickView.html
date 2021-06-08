@@ -42,8 +42,8 @@
 
                 <!-- otherwise, if the user has incorrectly entered an input, -->
                 {% else %}
-                    <div class="sub header">Please correctly enter one of the following
-                        tickers.</div>
+                    <div class="sub header" style="color:red;">Please correctly enter one of the following
+                        tickers and an integer.</div>
 
                 {% endif %}
 
@@ -58,11 +58,8 @@
                 {% endfor %}
                 </div>
 
-                <!-- this is a form for picking how many stocks of a company
-                the user owns, redirects to stockDisplay template after -->
-                <form method="POST" action="stockPick">
-                    {% csrf_token %}
-
+                <!-- this is a div tag that allows for the user to enter -->
+                <div>
                     <!-- input for which stock user owns -->
                     <div class="ui input focus">
                         <input type="text" name="tickerInput" id="tickerInput" placeholder="Stock Ticker:">
@@ -76,14 +73,27 @@
 
                     <!-- this button refreshes the page to allow for another
                     stock selection -->
-                    <button class="ui primary button" type="submit" value="save" name="addStock" onclick="addSymbol()">
+                    <button class="ui primary button" name="addStock" onclick="addSymbol()">
                       Add another stock
                     </button>
 
                     </br>
 
+                </div>
+
+                <!-- this form submits the data and sends it to be processed
+                in the stockPick view -->
+                <form method="POST" action="stockPick">
+                    {% csrf_token %}
+
+                    <!-- this is an empty value that is used to send
+                    and hold the symbol and sharesOwned values -->
+                    <div style="display: none;">
+                        <input type="text" name="symbolsInput" id="symbolsInput" placeholder="">
+                    </div>
+
                     <!-- button used to submit all stock data-->
-                    <button class="ui secondary basic button" type="submit" value="turnIn" name="turnIn">
+                    <button class="ui secondary basic button" type="submit" value="turnIn" name="turnIn" onclick="addSymbol()">
                       Submit
                     </button>
 
@@ -108,18 +118,30 @@
     function addSymbol() {
 
         // defines which input was the symbol
-        var symbol = document.getElementById("tickerInput").value;
+        var symbol = document.getElementById("tickerInput").value.trim();
         // defines which input was the number of shares owned
-        var sharesOwned = document.getElementById("sharesOwned").value;
-        // adds the symbol and the number of shares owned to a list
-        symbols.push(symbol + ":" + sharesOwned);
-
-        console.log(symbols);
+        var sharesOwned = document.getElementById("sharesOwned").value.trim();
+        // adds the symbol and the number of shares owned to a list (if not null)
 
         // clears both ticker input and shares owned
         document.getElementById("tickerInput").value = "";
         document.getElementById("sharesOwned").value = "";
 
+        // if the inputed symbol is not empty
+        if (symbol != "" && sharesOwned != "") {
+            symbols.push(symbol + ":" + sharesOwned);
+        }
+
+        // add the values to a giant string, separated by vertical lines
+        var symbolsData = "|";
+        for (var i=0; i < symbols.length; i++) {
+            var symbolAndShares = symbols[i];
+            symbolsData += symbolAndShares + "|";
+        }
+        symbolsData = symbolsData.slice(1,-1); // get rid of vertical lines on ends of string
+        document.getElementById("symbolsInput").value = symbolsData;
     }
+
+
     </script>
 </html>
