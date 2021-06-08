@@ -28,13 +28,19 @@
             <div class="jumbotron jumbotron-fluid">
                 <h1 style="margin-left: 10px;">Kessler Finance Site</h1>
             </div>
-            <!-- show user their username -->
-            <h1 class="ui header">Welcome, {{ request.user.username }}</h1>
+
+            <!-- if user is not editing their picks, -->
+            {% if edit == False %}
+                <!-- show user their username -->
+                <h1 class="ui header">Welcome, {{ request.user.username }}</h1>
+
+            {% endif %}
 
             <form method="POST" action="stockPick">
                 {% csrf_token %}
                 <button type="submit" class="ui primary basic button" name="load" value="loadButton">Load Stock Data</button>
             </form>
+
         </div>
     </body>
 </html>
